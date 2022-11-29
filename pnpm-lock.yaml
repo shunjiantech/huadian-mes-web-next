@@ -3,11 +3,11 @@ lockfileVersion: 5.4
 specifiers:
   '@types/react': ^18.0.25
   '@types/react-dom': ^18.0.9
-  '@vitejs/plugin-react': ^2.2.0
+  '@vitejs/plugin-react': ^3.0.0-alpha.1
   react: ^18.2.0
   react-dom: ^18.2.0
   typescript: ^4.9.3
-  vite: ^3.2.4
+  vite: ^4.0.0-alpha.5
 
 dependencies:
   react: 18.2.0
@@ -16,9 +16,9 @@ dependencies:
 devDependencies:
   '@types/react': 18.0.25
   '@types/react-dom': 18.0.9
-  '@vitejs/plugin-react': 2.2.0_vite@3.2.4
+  '@vitejs/plugin-react': 3.0.0-alpha.1_vite@4.0.0-alpha.5
   typescript: 4.9.3
-  vite: 3.2.4
+  vite: 4.0.0-alpha.5
 
 packages:
 
@@ -367,8 +367,8 @@ packages:
     resolution: {integrity: sha512-hppQEBDmlwhFAXKJX2KnWLYu5yMfi91yazPb2l+lbJiwW+wdo1gNeRA+3RgNSO39WYX2euey41KEwnqesU2Jew==}
     dev: true
 
-  /@vitejs/plugin-react/2.2.0_vite@3.2.4:
-    resolution: {integrity: sha512-FFpefhvExd1toVRlokZgxgy2JtnBOdp4ZDsq7ldCWaqGSGn9UhWMAVm/1lxPL14JfNS5yGz+s9yFrQY6shoStA==}
+  /@vitejs/plugin-react/3.0.0-alpha.1_vite@4.0.0-alpha.5:
+    resolution: {integrity: sha512-LuO/LC6HRiGDNMWUSCBs63eGr7jho1l8APWhKDhb+/AcMRyl/fnCGo+S22nKjZ5a4bBLuSiy0IG+/cFp35AiHQ==}
     engines: {node: ^14.18.0 || >=16.0.0}
     peerDependencies:
       vite: ^3.0.0
@@ -380,7 +380,7 @@ packages:
       '@babel/plugin-transform-react-jsx-source': 7.19.6_@babel+core@7.20.5
       magic-string: 0.26.7
       react-refresh: 0.14.0
-      vite: 3.2.4
+      vite: 4.0.0-alpha.5
     transitivePeerDependencies:
       - supports-color
     dev: true
@@ -801,9 +801,9 @@ packages:
       supports-preserve-symlinks-flag: 1.0.0
     dev: true
 
-  /rollup/2.79.1:
-    resolution: {integrity: sha512-uKxbd0IhMZOhjAiD5oAFp7BqvkA4Dv47qpOCtaNvng4HBwdbWtdOh8f5nZNuk2rp51PMGk3bzfWu5oayNEuYnw==}
-    engines: {node: '>=10.0.0'}
+  /rollup/3.3.0:
+    resolution: {integrity: sha512-wqOV/vUJCYEbWsXvwCkgGWvgaEnsbn4jxBQWKpN816CqsmCimDmCNJI83c6if7QVD4v/zlyRzxN7U2yDT5rfoA==}
+    engines: {node: '>=14.18.0', npm: '>=8.0.0'}
     hasBin: true
     optionalDependencies:
       fsevents: 2.3.2
@@ -863,8 +863,8 @@ packages:
       picocolors: 1.0.0
     dev: true
 
-  /vite/3.2.4:
-    resolution: {integrity: sha512-Z2X6SRAffOUYTa+sLy3NQ7nlHFU100xwanq1WDwqaiFiCe+25zdxP1TfCS5ojPV2oDDcXudHIoPnI1Z/66B7Yw==}
+  /vite/4.0.0-alpha.5:
+    resolution: {integrity: sha512-lnwP/kWw3Tf+05atEoUdUU91ESaVM+EVZnYCLJpAvW9QqzfU5SMRtk+aSavH64quJTQTezprgDyB482NaiSeOg==}
     engines: {node: ^14.18.0 || >=16.0.0}
     hasBin: true
     peerDependencies:
@@ -891,7 +891,7 @@ packages:
       esbuild: 0.15.16
       postcss: 8.4.19
       resolve: 1.22.1
-      rollup: 2.79.1
+      rollup: 3.3.0
     optionalDependencies:
       fsevents: 2.3.2
     dev: true
