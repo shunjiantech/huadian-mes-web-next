@@ -1,17 +1,27 @@
 import 'dayjs/locale/zh-cn'
 
-import { Button, ConfigProvider } from 'antd'
+import { ConfigProvider } from 'antd'
 import zhCN from 'antd/es/locale/zh_CN'
-import { useState } from 'react'
+import { BrowserRouter, Link, useRoutes } from 'react-router-dom'
+
+import routes from '@/routes'
+
+const Routes = () => {
+  const element = useRoutes(routes)
+
+  return <>{element}</>
+}
 
 const App = () => {
-  const [count, setCount] = useState(0)
-
   return (
     <ConfigProvider locale={zhCN}>
-      <Button onClick={() => setCount((count) => count + 1)}>
-        count is {count}
-      </Button>
+      <BrowserRouter>
+        <div>
+          <Link to="/">Home</Link>
+          <Link to="/about">About</Link>
+        </div>
+        <Routes />
+      </BrowserRouter>
     </ConfigProvider>
   )
 }
