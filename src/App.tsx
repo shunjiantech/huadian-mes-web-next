@@ -1,12 +1,13 @@
+import { Button } from 'antd'
 import { useState } from 'react'
 
 function App() {
   const [count, setCount] = useState(0)
 
   return (
-    <button onClick={() => setCount((count) => count + 1)}>
+    <Button onClick={() => setCount((count) => count + 1)}>
       count is {count}
-    </button>
+    </Button>
   )
 }
 
