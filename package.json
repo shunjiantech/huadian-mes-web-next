@@ -11,6 +11,7 @@
     "type-check": "tsc"
   },
   "dependencies": {
+    "@ant-design/pro-layout": "^6.38.22",
     "antd": "^4.24.4",
     "axios": "^1.2.0",
     "dayjs": "^1.11.6",
