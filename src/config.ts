@@ -1,3 +1,5 @@
+import { getFullAppURL } from '@/utils/getURL'
+
 interface Config {
   TITLE: string
   API_BASEURL: string
@@ -6,8 +8,7 @@ interface Config {
 
 const config: Config = {
   TITLE: import.meta.env.VITE_TITLE ?? '',
-  API_BASEURL: new URL(import.meta.env.VITE_API_BASEURL || '/', location.href)
-    .href,
+  API_BASEURL: getFullAppURL(import.meta.env.VITE_API_BASEURL || '/'),
   API_TIMEOUT: parseInt(import.meta.env.VITE_API_TIMEOUT || '0'),
 }
 
