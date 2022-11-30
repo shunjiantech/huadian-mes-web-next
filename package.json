@@ -30,6 +30,7 @@
     "@typescript-eslint/eslint-plugin": "^5.45.0",
     "@typescript-eslint/parser": "^5.45.0",
     "@vitejs/plugin-react": "^3.0.0-alpha.1",
+    "antd-dayjs-vite-plugin": "^1.2.2",
     "eslint": "^8.28.0",
     "eslint-config-prettier": "^8.5.0",
     "eslint-plugin-prettier": "^4.2.1",

@@ -12,3 +12,13 @@ interface ImportMetaEnv {
 interface ImportMeta {
   readonly env: Partial<ImportMetaEnv>
 }
+
+// replace moment to dayjs
+declare module 'moment' {
+  import { Dayjs } from 'dayjs'
+  namespace moment {
+    type Moment = Dayjs
+  }
+  export = moment
+  export as namespace moment
+}

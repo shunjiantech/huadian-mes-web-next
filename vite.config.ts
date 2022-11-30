@@ -3,6 +3,7 @@ import path from 'node:path'
 import { fileURLToPath, URL } from 'node:url'
 
 import react from '@vitejs/plugin-react'
+import { antdDayjs } from 'antd-dayjs-vite-plugin'
 import unocss from 'unocss/vite'
 import { defineConfig } from 'vite'
 import eslint from 'vite-plugin-eslint'
@@ -19,6 +20,7 @@ export default defineConfig({
   },
   plugins: [
     react(),
+    antdDayjs(),
     unocss(),
     eslint({
       fix: true,
