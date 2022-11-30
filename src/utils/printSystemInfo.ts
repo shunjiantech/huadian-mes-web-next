@@ -14,7 +14,7 @@ const info: {
   },
   {
     key: 'API_URL',
-    value: config.APP_BASEURL || '/',
+    value: config.API_BASEURL || '/',
   },
 ]
 

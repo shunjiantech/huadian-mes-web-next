@@ -1,14 +1,14 @@
-import _ from 'lodash-es'
-
 interface Config {
-  APP_TITLE: string
-  APP_BASEURL: string
+  TITLE: string
+  API_BASEURL: string
+  API_TIMEOUT: number
 }
 
 const config: Config = {
-  APP_TITLE: import.meta.env.VITE_APP_TITLE ?? '',
-  APP_BASEURL: new URL(import.meta.env.VITE_APP_BASEURL || '/', location.href)
+  TITLE: import.meta.env.VITE_TITLE ?? '',
+  API_BASEURL: new URL(import.meta.env.VITE_API_BASEURL || '/', location.href)
     .href,
+  API_TIMEOUT: parseInt(import.meta.env.VITE_API_TIMEOUT || '0'),
 }
 
 const windowConfig =
@@ -18,12 +18,29 @@ const windowConfig =
     }
   ).__CONFIG__ ?? {}
 
-_.keys(config).forEach((value) => {
-  const key = value as keyof Config
-  const windowConfigValue = windowConfig[key]
-  if (windowConfigValue) {
-    config[key] = windowConfigValue
+{
+  let key: keyof Config
+  for (key in config) {
+    switch (key) {
+      case 'TITLE':
+      case 'API_BASEURL':
+        {
+          const windowConfigValue = windowConfig[key]
+          if (windowConfigValue) {
+            config[key] = windowConfigValue
+          }
+        }
+        break
+      case 'API_TIMEOUT':
+        {
+          const windowConfigValue = windowConfig[key]
+          if (windowConfigValue) {
+            config[key] = windowConfigValue
+          }
+        }
+        break
+    }
   }
-})
+}
 
 export default config
