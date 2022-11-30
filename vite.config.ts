@@ -38,6 +38,7 @@ export default defineConfig({
   resolve: {
     alias: {
       '@': fileURLToPath(new URL('./src', import.meta.url)),
+      '~antd/': 'antd/', // fix @ant-design/pro-layout
     },
   },
   css: {
