@@ -1,5 +1,6 @@
 import '@/utils/printSystemInfo'
 import '@/utils/JSONBigInt'
+import 'uno.css'
 
 import React from 'react'
 import ReactDOM from 'react-dom/client'

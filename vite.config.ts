@@ -3,6 +3,7 @@ import path from 'node:path'
 import { fileURLToPath, URL } from 'node:url'
 
 import react from '@vitejs/plugin-react'
+import unocss from 'unocss/vite'
 import { defineConfig } from 'vite'
 import eslint from 'vite-plugin-eslint'
 
@@ -17,6 +18,7 @@ export default defineConfig({
   },
   plugins: [
     react(),
+    unocss(),
     eslint({
       fix: true,
     }),
