@@ -1,7 +1,8 @@
 import { ProLayout } from '@ant-design/pro-layout'
-import { Link, Outlet, useLocation } from 'react-router-dom'
+import { Link, useLocation } from 'react-router-dom'
 
 import config from '@/config'
+import BlankLayout from '@/layouts/BlankLayout'
 
 const Layout = () => {
   const location = useLocation()
@@ -32,7 +33,7 @@ const Layout = () => {
       }}
       menuItemRender={(item, dom) => <Link to={item.path ?? '/'}>{dom}</Link>}
     >
-      <Outlet />
+      <BlankLayout />
     </ProLayout>
   )
 }
