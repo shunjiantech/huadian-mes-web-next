@@ -32,6 +32,11 @@ export default defineConfig({
           esModule: true,
           resolveStyle: (name) => `antd/es/${name}/style/index`,
         },
+        {
+          libraryName: '@formily/antd',
+          esModule: true,
+          resolveStyle: (name) => `@formily/antd/esm/${name}/style`,
+        },
       ],
     }),
   ],
