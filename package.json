@@ -13,6 +13,10 @@
   "dependencies": {
     "@ant-design/icons": "^4.8.0",
     "@ant-design/pro-layout": "^6.38.22",
+    "@formily/antd": "^2.2.13",
+    "@formily/core": "^2.2.13",
+    "@formily/react": "^2.2.13",
+    "@formily/reactive": "^2.2.13",
     "antd": "^4.24.4",
     "axios": "^1.2.0",
     "dayjs": "^1.11.6",
