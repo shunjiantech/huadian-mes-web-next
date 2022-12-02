@@ -69,8 +69,9 @@ const routes: RouteObject[] = [
     element: (
       <CheckToken
         needToken={false}
-        fallbackEffect={({ navigate }) => {
-          navigate('/')
+        fallbackEffect={({ navigate, location }) => {
+          const redirect = new URLSearchParams(location.search).get('redirect')
+          navigate(redirect ? decodeURIComponent(redirect) : '/')
         }}
       >
         {createLazyRouteElement(() => import('@/pages/Login'))}
