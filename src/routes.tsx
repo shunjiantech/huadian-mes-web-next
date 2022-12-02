@@ -35,6 +35,10 @@ const routes: RouteObject[] = [
       },
     ],
   },
+  {
+    path: '/login',
+    element: genLazyEl(() => import('@/pages/Login')),
+  },
 ]
 
 export default routes
