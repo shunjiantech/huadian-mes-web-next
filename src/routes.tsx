@@ -1,12 +1,14 @@
 import { Spin } from 'antd'
-import React, { lazy, Suspense } from 'react'
+import React, { Suspense } from 'react'
 import { RouteObject } from 'react-router-dom'
+
+import CheckToken from '@/components/CheckToken'
 
 const genEl = (Component: React.ComponentType) => {
   return <Component />
 }
 
-const genLazyEl = (factory: Parameters<typeof lazy>[0]) => {
+const genLazyEl = (factory: Parameters<typeof React.lazy>[0]) => {
   return (
     <Suspense
       fallback={
@@ -15,7 +17,7 @@ const genLazyEl = (factory: Parameters<typeof lazy>[0]) => {
         </div>
       }
     >
-      {genEl(lazy(factory))}
+      {genEl(React.lazy(factory))}
     </Suspense>
   )
 }
@@ -23,7 +25,16 @@ const genLazyEl = (factory: Parameters<typeof lazy>[0]) => {
 const routes: RouteObject[] = [
   {
     path: '/',
-    element: genLazyEl(() => import('@/layouts/AdminLayout')),
+    element: (
+      <CheckToken
+        needToken={true}
+        fallbackEffect={({ navigate }) => {
+          navigate('/login')
+        }}
+      >
+        {genLazyEl(() => import('@/layouts/AdminLayout'))}
+      </CheckToken>
+    ),
     children: [
       {
         path: '/',
@@ -37,7 +48,16 @@ const routes: RouteObject[] = [
   },
   {
     path: '/login',
-    element: genLazyEl(() => import('@/pages/Login')),
+    element: (
+      <CheckToken
+        needToken={false}
+        fallbackEffect={({ navigate }) => {
+          navigate('/')
+        }}
+      >
+        {genLazyEl(() => import('@/pages/Login'))}
+      </CheckToken>
+    ),
   },
 ]
 
