@@ -1,3 +1,4 @@
+import { HomeOutlined, InfoCircleOutlined } from '@ant-design/icons'
 import { ProLayout } from '@ant-design/pro-layout'
 import { Link, useLocation } from 'react-router-dom'
 
@@ -22,10 +23,12 @@ const Layout = () => {
       route={{
         routes: [
           {
+            icon: <HomeOutlined />,
             name: 'Home',
             path: '/',
           },
           {
+            icon: <InfoCircleOutlined />,
             name: 'About',
             path: '/about',
           },
