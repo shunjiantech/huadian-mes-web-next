@@ -4,11 +4,11 @@ import { RouteObject } from 'react-router-dom'
 
 import CheckToken from '@/components/CheckToken'
 
-const genEl = (Component: React.ComponentType) => {
+const createRouteElement = (Component: React.ComponentType) => {
   return <Component />
 }
 
-const genLazyEl = (factory: Parameters<typeof React.lazy>[0]) => {
+const createLazyRouteElement = (factory: Parameters<typeof React.lazy>[0]) => {
   return (
     <Suspense
       fallback={
@@ -17,7 +17,7 @@ const genLazyEl = (factory: Parameters<typeof React.lazy>[0]) => {
         </div>
       }
     >
-      {genEl(React.lazy(factory))}
+      {createRouteElement(React.lazy(factory))}
     </Suspense>
   )
 }
@@ -32,17 +32,17 @@ const routes: RouteObject[] = [
           navigate('/login')
         }}
       >
-        {genLazyEl(() => import('@/layouts/AdminLayout'))}
+        {createLazyRouteElement(() => import('@/layouts/AdminLayout'))}
       </CheckToken>
     ),
     children: [
       {
         path: '/',
-        element: genLazyEl(() => import('@/pages/Home')),
+        element: createLazyRouteElement(() => import('@/pages/Home')),
       },
       {
         path: '/about',
-        element: genLazyEl(() => import('@/pages/About')),
+        element: createLazyRouteElement(() => import('@/pages/About')),
       },
     ],
   },
@@ -55,7 +55,7 @@ const routes: RouteObject[] = [
           navigate('/')
         }}
       >
-        {genLazyEl(() => import('@/pages/Login'))}
+        {createLazyRouteElement(() => import('@/pages/Login'))}
       </CheckToken>
     ),
   },
