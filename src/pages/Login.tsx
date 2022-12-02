@@ -4,6 +4,9 @@ import { createForm } from '@formily/core'
 import { createSchemaField } from '@formily/react'
 import { Card, Tabs } from 'antd'
 import { createElement, useMemo } from 'react'
+import { useSetRecoilState } from 'recoil'
+
+import tokenState from '@/store/tokenState'
 
 const SchemaField = createSchemaField({
   components: {
@@ -47,6 +50,8 @@ const schema = {
 const Login = () => {
   const form = useMemo(() => createForm(), [])
 
+  const setToken = useSetRecoilState(tokenState)
+
   return (
     <div className="bg-#eee h-full flex justify-center items-center">
       <Card className="w-400px">
@@ -57,7 +62,15 @@ const Login = () => {
               label: '账号登录',
               key: 'login',
               children: (
-                <Form form={form} layout="vertical" size="large">
+                <Form
+                  form={form}
+                  layout="vertical"
+                  size="large"
+                  onAutoSubmit={async (e) => {
+                    await new Promise((resolve) => setTimeout(resolve, 1000))
+                    setToken(`${e.username}:${e.password}`)
+                  }}
+                >
                   <SchemaField schema={schema} />
                   <Submit size="large" block>
                     登录
