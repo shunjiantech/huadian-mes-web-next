@@ -1,8 +1,15 @@
+import { HomeOutlined, InfoCircleOutlined } from '@ant-design/icons'
+import { MenuDataItem } from '@ant-design/pro-layout'
 import { Spin } from 'antd'
 import React, { Suspense } from 'react'
-import { RouteObject } from 'react-router-dom'
+import { RouteObject as _RouteObject } from 'react-router-dom'
 
 import CheckToken from '@/components/CheckToken'
+
+export type RouteObject = _RouteObject & {
+  menu?: MenuDataItem
+  children?: RouteObject[]
+}
 
 const createRouteElement = (Component: React.ComponentType) => {
   return <Component />
@@ -25,6 +32,9 @@ const createLazyRouteElement = (factory: Parameters<typeof React.lazy>[0]) => {
 const routes: RouteObject[] = [
   {
     path: '/',
+    menu: {
+      flatMenu: true,
+    },
     element: (
       <CheckToken
         needToken={true}
@@ -37,11 +47,19 @@ const routes: RouteObject[] = [
     ),
     children: [
       {
-        path: '/',
+        path: '',
+        menu: {
+          icon: <HomeOutlined />,
+          name: '首页',
+        },
         element: createLazyRouteElement(() => import('@/pages/Home')),
       },
       {
-        path: '/about',
+        path: 'about',
+        menu: {
+          icon: <InfoCircleOutlined />,
+          name: '关于',
+        },
         element: createLazyRouteElement(() => import('@/pages/About')),
       },
     ],
