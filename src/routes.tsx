@@ -39,7 +39,11 @@ const routes: RouteObject[] = [
       <CheckToken
         needToken={true}
         fallbackEffect={({ navigate }) => {
-          navigate('/login')
+          navigate(
+            `/login?redirect=${encodeURIComponent(
+              `${location.pathname}${location.search}`,
+            )}`,
+          )
         }}
       >
         {createLazyRouteElement(() => import('@/layouts/AdminLayout'))}
