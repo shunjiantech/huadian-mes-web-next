@@ -35,7 +35,7 @@ const CheckToken = (
         withToken: props.needToken,
       })
     }
-  }, [token, props.needToken])
+  }, [token, props.needToken, location])
 
   if (Number(!!token) ^ Number(props.needToken)) {
     return <>{props.fallback}</>

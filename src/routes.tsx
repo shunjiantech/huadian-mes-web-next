@@ -38,7 +38,7 @@ const routes: RouteObject[] = [
     element: (
       <CheckToken
         needToken={true}
-        fallbackEffect={({ navigate }) => {
+        fallbackEffect={({ navigate, location }) => {
           navigate(
             `/login?redirect=${encodeURIComponent(
               `${location.pathname}${location.search}`,
