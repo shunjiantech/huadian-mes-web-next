@@ -4,6 +4,7 @@ import { Spin } from 'antd'
 import React, { Suspense } from 'react'
 import { RouteObject as _RouteObject } from 'react-router-dom'
 
+import CheckPermissions from '@/components/CheckPermissions'
 import CheckToken from '@/components/CheckToken'
 
 export type RouteObject = _RouteObject & {
@@ -28,6 +29,8 @@ const createLazyRouteElement = (factory: Parameters<typeof React.lazy>[0]) => {
     </Suspense>
   )
 }
+
+const Forbidden = React.lazy(() => import('@/pages/Forbidden'))
 
 const routes: RouteObject[] = [
   {
@@ -56,7 +59,11 @@ const routes: RouteObject[] = [
           icon: <HomeOutlined />,
           name: '首页',
         },
-        element: createLazyRouteElement(() => import('@/pages/Home')),
+        element: (
+          <CheckPermissions fallback={<Forbidden />}>
+            {createLazyRouteElement(() => import('@/pages/Home'))}
+          </CheckPermissions>
+        ),
       },
       {
         path: 'about',
@@ -64,7 +71,11 @@ const routes: RouteObject[] = [
           icon: <InfoCircleOutlined />,
           name: '关于',
         },
-        element: createLazyRouteElement(() => import('@/pages/About')),
+        element: (
+          <CheckPermissions fallback={<Forbidden />}>
+            {createLazyRouteElement(() => import('@/pages/About'))}
+          </CheckPermissions>
+        ),
       },
     ],
   },
