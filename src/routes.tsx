@@ -12,6 +12,9 @@ export type RouteObject = _RouteObject & {
   children?: RouteObject[]
 }
 
+const Forbidden = React.lazy(() => import('@/pages/Forbidden'))
+const NotFound = React.lazy(() => import('@/pages/NotFound'))
+
 const createRouteElement = (Component: React.ComponentType) => {
   return <Component />
 }
@@ -29,8 +32,6 @@ const createLazyRouteElement = (factory: Parameters<typeof React.lazy>[0]) => {
     </Suspense>
   )
 }
-
-const Forbidden = React.lazy(() => import('@/pages/Forbidden'))
 
 const routes: RouteObject[] = [
   {
@@ -92,6 +93,23 @@ const routes: RouteObject[] = [
         {createLazyRouteElement(() => import('@/pages/Login'))}
       </CheckToken>
     ),
+  },
+  {
+    path: '*',
+    element: (
+      <CheckToken
+        needToken={false}
+        fallback={createLazyRouteElement(() => import('@/layouts/AdminLayout'))}
+      >
+        {createLazyRouteElement(() => import('@/layouts/BlankLayout'))}
+      </CheckToken>
+    ),
+    children: [
+      {
+        path: '*',
+        element: <NotFound />,
+      },
+    ],
   },
 ]
 
