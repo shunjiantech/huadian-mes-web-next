@@ -12,8 +12,8 @@ export type RouteObject = _RouteObject & {
   children?: RouteObject[]
 }
 
-const Forbidden = React.lazy(() => import('@/pages/Forbidden'))
-const NotFound = React.lazy(() => import('@/pages/NotFound'))
+const Forbidden = React.lazy(() => import('@/pages/common/Forbidden'))
+const NotFound = React.lazy(() => import('@/pages/common/NotFound'))
 
 const createLazyEl = (factory: Parameters<typeof React.lazy>[0]) => {
   const Comp = React.lazy(factory)
