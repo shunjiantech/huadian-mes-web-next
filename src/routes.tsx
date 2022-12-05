@@ -15,11 +15,8 @@ export type RouteObject = _RouteObject & {
 const Forbidden = React.lazy(() => import('@/pages/Forbidden'))
 const NotFound = React.lazy(() => import('@/pages/NotFound'))
 
-const createRouteElement = (Component: React.ComponentType) => {
-  return <Component />
-}
-
-const createLazyRouteElement = (factory: Parameters<typeof React.lazy>[0]) => {
+const createLazyEl = (factory: Parameters<typeof React.lazy>[0]) => {
+  const Comp = React.lazy(factory)
   return (
     <Suspense
       fallback={
@@ -28,7 +25,7 @@ const createLazyRouteElement = (factory: Parameters<typeof React.lazy>[0]) => {
         </div>
       }
     >
-      {createRouteElement(React.lazy(factory))}
+      <Comp />
     </Suspense>
   )
 }
@@ -50,7 +47,7 @@ const routes: RouteObject[] = [
           )
         }}
       >
-        {createLazyRouteElement(() => import('@/layouts/AdminLayout'))}
+        {createLazyEl(() => import('@/layouts/AdminLayout'))}
       </CheckToken>
     ),
     children: [
@@ -62,7 +59,7 @@ const routes: RouteObject[] = [
         },
         element: (
           <CheckPermissions fallback={<Forbidden />}>
-            {createLazyRouteElement(() => import('@/pages/Home'))}
+            {createLazyEl(() => import('@/pages/Home'))}
           </CheckPermissions>
         ),
       },
@@ -74,7 +71,7 @@ const routes: RouteObject[] = [
         },
         element: (
           <CheckPermissions fallback={<Forbidden />}>
-            {createLazyRouteElement(() => import('@/pages/About'))}
+            {createLazyEl(() => import('@/pages/About'))}
           </CheckPermissions>
         ),
       },
@@ -90,7 +87,7 @@ const routes: RouteObject[] = [
           navigate(redirect ? decodeURIComponent(redirect) : '/')
         }}
       >
-        {createLazyRouteElement(() => import('@/pages/Login'))}
+        {createLazyEl(() => import('@/pages/Login'))}
       </CheckToken>
     ),
   },
@@ -99,9 +96,9 @@ const routes: RouteObject[] = [
     element: (
       <CheckToken
         needToken={false}
-        fallback={createLazyRouteElement(() => import('@/layouts/AdminLayout'))}
+        fallback={createLazyEl(() => import('@/layouts/AdminLayout'))}
       >
-        {createLazyRouteElement(() => import('@/layouts/BlankLayout'))}
+        {createLazyEl(() => import('@/layouts/BlankLayout'))}
       </CheckToken>
     ),
     children: [
