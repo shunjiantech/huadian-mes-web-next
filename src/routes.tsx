@@ -9,6 +9,10 @@ import CheckToken from '@/components/CheckToken'
 
 export type RouteObject = _RouteObject & {
   menu?: MenuDataItem
+  permissions?: {
+    include?: string[]
+    exclude?: string[]
+  }
   children?: RouteObject[]
 }
 
