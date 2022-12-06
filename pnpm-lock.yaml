@@ -7,6 +7,7 @@ specifiers:
   '@formily/core': ^2.2.14
   '@formily/react': ^2.2.14
   '@formily/reactive': ^2.2.14
+  '@formily/reactive-react': ^2.2.14
   '@rushstack/eslint-patch': ^1.2.0
   '@types/json-bigint': ^1.0.1
   '@types/lodash-es': ^4.17.6
@@ -48,6 +49,7 @@ dependencies:
   '@formily/core': 2.2.14
   '@formily/react': 2.2.14_6aizntnfvabx3mwlawjsgtzhby
   '@formily/reactive': 2.2.14
+  '@formily/reactive-react': 2.2.14_yqqa5ithnjtlkxisuaub7c4kpa
   antd: 4.24.4_biqbaboplfbrettd7655fr4n2y
   axios: 1.2.1
   dayjs: 1.11.6
