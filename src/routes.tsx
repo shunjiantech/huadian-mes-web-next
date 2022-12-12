@@ -2,19 +2,28 @@ import { HomeOutlined, InfoCircleOutlined } from '@ant-design/icons'
 import { MenuDataItem } from '@ant-design/pro-layout'
 import { Spin } from 'antd'
 import React, { Suspense } from 'react'
-import { RouteObject as _RouteObject } from 'react-router-dom'
+import { IndexRouteObject, NonIndexRouteObject } from 'react-router-dom'
 
 import CheckPermissions from '@/components/CheckPermissions'
 import CheckToken from '@/components/CheckToken'
 
-export type RouteObject = _RouteObject & {
+export interface IndexRouteObjectExt extends IndexRouteObject {
   menu?: MenuDataItem
   permissions?: {
     include?: string[]
     exclude?: string[]
   }
-  children?: RouteObject[]
 }
+export interface NonIndexRouteObjectExt extends NonIndexRouteObject {
+  menu?: MenuDataItem
+  permissions?: {
+    include?: string[]
+    exclude?: string[]
+  }
+  children?: RouteObjectExt[]
+}
+
+export type RouteObjectExt = IndexRouteObjectExt | NonIndexRouteObjectExt
 
 const Forbidden = React.lazy(() => import('@/pages/common/Forbidden'))
 const NotFound = React.lazy(() => import('@/pages/common/NotFound'))
@@ -34,7 +43,7 @@ const createLazyEl = (factory: Parameters<typeof React.lazy>[0]) => {
   )
 }
 
-const routes: RouteObject[] = [
+const routes: RouteObjectExt[] = [
   {
     path: '/',
     menu: {

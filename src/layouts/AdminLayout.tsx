@@ -7,11 +7,11 @@ import { useRecoilValue } from 'recoil'
 
 import config from '@/config'
 import BlankLayout from '@/layouts/BlankLayout'
-import routes, { RouteObject } from '@/routes'
+import routes, { RouteObjectExt } from '@/routes'
 import permissionsState from '@/store/permissionsState'
 
 const genRoutes = (
-  routes: RouteObject[],
+  routes: RouteObjectExt[],
   permissions: string[],
   parentPath = '/',
 ): Route[] => {
