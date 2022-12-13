@@ -1,4 +1,8 @@
-import { HomeOutlined, InfoCircleOutlined } from '@ant-design/icons'
+import {
+  HomeOutlined,
+  InfoCircleOutlined,
+  TableOutlined,
+} from '@ant-design/icons'
 import { MenuDataItem } from '@ant-design/pro-layout'
 import { Spin } from 'antd'
 import React, { Suspense } from 'react'
@@ -85,6 +89,18 @@ const routes: RouteObjectExt[] = [
         element: (
           <CheckPermissions fallback={<Forbidden />}>
             {createLazyEl(() => import('@/pages/About'))}
+          </CheckPermissions>
+        ),
+      },
+      {
+        path: 'table',
+        menu: {
+          icon: <TableOutlined />,
+          name: '表格',
+        },
+        element: (
+          <CheckPermissions fallback={<Forbidden />}>
+            {createLazyEl(() => import('@/pages/Table'))}
           </CheckPermissions>
         ),
       },
