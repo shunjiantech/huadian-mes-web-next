@@ -2,16 +2,16 @@ import { LockOutlined, UserOutlined } from '@ant-design/icons'
 import { Form, FormItem, Input, Password, Submit } from '@formily/antd'
 import { createForm } from '@formily/core'
 import { createSchemaField } from '@formily/react'
-import { Card, Spin, Tabs } from 'antd'
+import { Button, Card, Result, Spin, Tabs } from 'antd'
 import _ from 'lodash-es'
 import queryString from 'query-string'
-import { createElement, useMemo } from 'react'
-import { useLocation } from 'react-router-dom'
+import { createElement, useMemo, useState } from 'react'
+import { useLocation, useNavigate } from 'react-router-dom'
 import { useSetRecoilState } from 'recoil'
 
 import tokenState from '@/store/tokenState'
 import request from '@/utils/request'
-import { redirectToSSOLogin } from '@/utils/sso'
+import { redirectToSSOLogin, redirectToSSOLogout } from '@/utils/sso'
 
 const SchemaField = createSchemaField({
   components: {
@@ -54,12 +54,15 @@ const schema = {
 
 const Login = () => {
   const location = useLocation()
+  const navigate = useNavigate()
 
   const form = useMemo(() => createForm(), [])
 
   const setToken = useSetRecoilState(tokenState)
 
   const query = useMemo(() => queryString.parse(location.search), [location])
+
+  const [ssoLoginErr, setSsoLoginErr] = useState<never>()
 
   const login = async () => {
     try {
@@ -76,28 +79,64 @@ const Login = () => {
       if (!response.data?.data?.token) {
         throw response.data.message
       }
-      setToken(response.data.data.token)
+      // setToken(response.data.data.token)
     } catch (err) {
-      console.error(err)
-      // pass
+      setSsoLoginErr(err as never)
     }
   }
 
   useMemo(() => {
     if (!query.code) {
-      redirectToSSOLogin()
+      redirectToSSOLogin(window.location.href)
       return
     }
     login()
   }, [query])
 
   if (query.code) {
+    if (ssoLoginErr) {
+      return (
+        <Result
+          status="error"
+          title="授权失败"
+          subTitle={ssoLoginErr}
+          extra={[
+            <Button
+              type="primary"
+              key="retry"
+              onClick={() => {
+                navigate(
+                  `${location.pathname}?${queryString.stringify(
+                    _.omit(query, 'code'),
+                  )}`,
+                )
+              }}
+            >
+              重试授权
+            </Button>,
+            <Button
+              key="logout"
+              onClick={() => {
+                redirectToSSOLogout(
+                  `${window.location.origin}${
+                    window.location.pathname
+                  }?${queryString.stringify(_.omit(query, 'code'))}`,
+                )
+              }}
+            >
+              注销登录
+            </Button>,
+          ]}
+        />
+      )
+    }
     return (
       <div className="h-full flex justify-center items-center">
         <Spin />
       </div>
     )
   }
+  return null
 
   return (
     <div className="bg-#eee h-full flex justify-center items-center">
