@@ -6,6 +6,15 @@ import { createSchemaField } from '@formily/react'
 import { Button, Popconfirm, Space, Typography } from 'antd'
 import { useMemo, useRef } from 'react'
 
+interface DataItem {
+  id?: number | string
+  field_1?: string
+  field_2?: string
+  field_3?: string
+  field_4?: string
+  field_5?: string
+}
+
 const SchemaField = createSchemaField({
   components: {
     FormItem,
@@ -115,7 +124,7 @@ const openEditor = (id?: number | string) => {
 const Table = () => {
   const tableActionRef = useRef<ActionType>()
 
-  const columns = useMemo<ProColumns[]>(
+  const columns = useMemo<ProColumns<DataItem>[]>(
     () => [
       {
         dataIndex: 'index',
@@ -174,7 +183,7 @@ const Table = () => {
   return (
     <>
       <PageContainer>
-        <ProTable
+        <ProTable<DataItem>
           actionRef={tableActionRef}
           request={async ({ current, pageSize }) => {
             if (!current || !pageSize) {
