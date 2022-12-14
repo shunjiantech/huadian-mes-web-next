@@ -2,11 +2,16 @@ import { LockOutlined, UserOutlined } from '@ant-design/icons'
 import { Form, FormItem, Input, Password, Submit } from '@formily/antd'
 import { createForm } from '@formily/core'
 import { createSchemaField } from '@formily/react'
-import { Card, Tabs } from 'antd'
+import { Card, Spin, Tabs } from 'antd'
+import _ from 'lodash-es'
+import queryString from 'query-string'
 import { createElement, useMemo } from 'react'
+import { useLocation } from 'react-router-dom'
 import { useSetRecoilState } from 'recoil'
 
 import tokenState from '@/store/tokenState'
+import request from '@/utils/request'
+import { redirectToSSOLogin } from '@/utils/sso'
 
 const SchemaField = createSchemaField({
   components: {
@@ -48,9 +53,51 @@ const schema = {
 }
 
 const Login = () => {
+  const location = useLocation()
+
   const form = useMemo(() => createForm(), [])
 
   const setToken = useSetRecoilState(tokenState)
+
+  const query = useMemo(() => queryString.parse(location.search), [location])
+
+  const login = async () => {
+    try {
+      const response = await request({
+        method: 'POST',
+        url: '/api/v1/users/login',
+        data: {
+          code: query.code,
+          redirect_uri: `${window.location.origin}${
+            window.location.pathname
+          }?${queryString.stringify(_.omit(query, 'code'))}`,
+        },
+      })
+      if (!response.data?.data?.token) {
+        throw response.data.message
+      }
+      setToken(response.data.data.token)
+    } catch (err) {
+      console.error(err)
+      // pass
+    }
+  }
+
+  useMemo(() => {
+    if (!query.code) {
+      redirectToSSOLogin()
+      return
+    }
+    login()
+  }, [query])
+
+  if (query.code) {
+    return (
+      <div className="h-full flex justify-center items-center">
+        <Spin />
+      </div>
+    )
+  }
 
   return (
     <div className="bg-#eee h-full flex justify-center items-center">
