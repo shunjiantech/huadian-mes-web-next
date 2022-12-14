@@ -7,6 +7,8 @@ interface ImportMetaEnv {
   readonly VITE_TITLE?: string
   readonly VITE_API_BASEURL?: string
   readonly VITE_API_TIMEOUT?: string
+  readonly SSO_CLIENT_ID?: string
+  readonly SSO_OAUTH_URL?: string
 }
 
 interface ImportMeta {
