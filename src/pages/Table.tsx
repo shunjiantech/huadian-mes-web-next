@@ -181,68 +181,85 @@ const Table = () => {
   )
 
   return (
-    <>
-      <PageContainer>
-        <ProTable<DataItem>
-          actionRef={tableActionRef}
-          request={async ({ current, pageSize }) => {
-            if (!current || !pageSize) {
-              return {
-                success: false,
-              }
-            }
-            await new Promise((resolve) => {
-              setTimeout(resolve, 1000)
-            })
+    <PageContainer>
+      <ProTable<DataItem>
+        actionRef={tableActionRef}
+        request={async ({ current, pageSize }) => {
+          if (!current || !pageSize) {
             return {
-              data: Array.from({ length: pageSize }).map((_, index) => {
-                const i = (current - 1) * pageSize + index + 1
-                return {
-                  id: i,
-                  field_1: `A_${i}`,
-                  field_2: `B_${i}`,
-                  field_3: `C_${i}`,
-                  field_4: `D_${i}`,
-                  field_5: `E_${i}`,
-                }
-              }),
-              total: 1001,
-              success: true,
+              success: false,
             }
-          }}
-          columns={columns}
-          columnEmptyText={false}
-          rowKey="id"
-          rowSelection={{
-            alwaysShowAlert: true,
-          }}
-          toolbar={{
-            title: '标题',
-            subTitle: '副标题',
-            tooltip: '标题提示',
-            actions: [
-              <Button
-                key="new"
-                type="primary"
-                icon={<PlusOutlined />}
-                onClick={async () => {
-                  await openEditor()
+          }
+          await new Promise((resolve) => {
+            setTimeout(resolve, 1000)
+          })
+          return {
+            data: Array.from({ length: pageSize }).map((_, index) => {
+              const i = (current - 1) * pageSize + index + 1
+              return {
+                id: i,
+                field_1: `A_${i}`,
+                field_2: `B_${i}`,
+                field_3: `C_${i}`,
+                field_4: `D_${i}`,
+                field_5: `E_${i}`,
+              }
+            }),
+            total: 1001,
+            success: true,
+          }
+        }}
+        columns={columns}
+        columnEmptyText={false}
+        rowKey="id"
+        rowSelection={{
+          alwaysShowAlert: true,
+        }}
+        tableAlertOptionRender={({ selectedRowKeys }) => {
+          return (
+            <Space>
+              <Typography.Link disabled={selectedRowKeys.length === 0}>
+                批量操作
+              </Typography.Link>
+              <Popconfirm
+                title="您确定要删除吗？"
+                onConfirm={async () => {
                   tableActionRef.current?.reload()
                 }}
               >
-                新增
-              </Button>,
-            ],
-          }}
-          options={false}
-          pagination={{
-            size: 'default',
-            defaultPageSize: 10,
-          }}
-        />
-      </PageContainer>
+                <Typography.Link disabled={selectedRowKeys.length === 0}>
+                  批量删除
+                </Typography.Link>
+              </Popconfirm>
+            </Space>
+          )
+        }}
+        toolbar={{
+          title: '标题',
+          subTitle: '副标题',
+          tooltip: '标题提示',
+          actions: [
+            <Button
+              key="new"
+              type="primary"
+              icon={<PlusOutlined />}
+              onClick={async () => {
+                await openEditor()
+                tableActionRef.current?.reload()
+              }}
+            >
+              新增
+            </Button>,
+          ],
+        }}
+        options={false}
+        pagination={{
+          size: 'default',
+          defaultPageSize: 10,
+        }}
+      />
       <FormDialog.Portal />
-    </>
+    </PageContainer>
   )
 }
 
