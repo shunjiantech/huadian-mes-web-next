@@ -2,7 +2,7 @@ import { readFileSync } from 'node:fs'
 import path from 'node:path'
 import { fileURLToPath, URL } from 'node:url'
 
-import react from '@vitejs/plugin-react'
+import react from '@vitejs/plugin-react-swc'
 import { antdDayjs } from 'antd-dayjs-vite-plugin'
 import unocss from 'unocss/vite'
 import { defineConfig } from 'vite'
