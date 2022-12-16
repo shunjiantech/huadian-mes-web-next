@@ -1,4 +1,5 @@
 import {
+  ExperimentOutlined,
   FileExclamationOutlined,
   HomeOutlined,
   InfoCircleOutlined,
@@ -104,6 +105,31 @@ const routes: RouteObjectExt[] = [
             {createLazyEl(() => import('@/pages/Table'))}
           </CheckPermissions>
         ),
+      },
+      {
+        path: 'test-info',
+        menu: {
+          icon: <ExperimentOutlined />,
+          name: '试验信息管理',
+        },
+        element: (
+          <CheckPermissions fallback={<Forbidden />}>
+            {createLazyEl(() => import('@/layouts/BlankLayout'))}
+          </CheckPermissions>
+        ),
+        children: [
+          {
+            path: 'customer',
+            menu: {
+              name: '委托单位设置',
+            },
+            element: (
+              <CheckPermissions fallback={<Forbidden />}>
+                {createLazyEl(() => import('@/pages/testInfo/Customer'))}
+              </CheckPermissions>
+            ),
+          },
+        ],
       },
       {
         path: 'laboratory-info',
