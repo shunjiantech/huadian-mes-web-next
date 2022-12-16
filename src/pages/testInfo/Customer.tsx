@@ -107,7 +107,7 @@ const schema = {
   },
 }
 
-const openStandardEditor = (id?: number | string) => {
+const openCustomerEditor = (id?: number | string) => {
   const dialog = FormDialog(id ? '编辑' : '新增', () => (
     <FormLayout labelCol={4} wrapperCol={20}>
       <SchemaField schema={schema} />
@@ -212,7 +212,7 @@ const Customer = () => {
           <Space wrap>
             <Typography.Link
               onClick={async () => {
-                await openStandardEditor(record.id)
+                await openCustomerEditor(record.id)
                 tableActionRef.current?.reload()
               }}
             >
@@ -330,7 +330,7 @@ const Customer = () => {
               type="primary"
               icon={<PlusOutlined />}
               onClick={async () => {
-                await openStandardEditor()
+                await openCustomerEditor()
                 tableActionRef.current?.reload()
               }}
             >
