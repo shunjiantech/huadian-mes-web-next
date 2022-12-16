@@ -3,6 +3,7 @@ import {
   FileExclamationOutlined,
   HomeOutlined,
   InfoCircleOutlined,
+  SettingOutlined,
   TableOutlined,
 } from '@ant-design/icons'
 import { MenuDataItem } from '@ant-design/pro-layout'
@@ -162,6 +163,33 @@ const routes: RouteObjectExt[] = [
             element: (
               <CheckPermissions fallback={<Forbidden />}>
                 {createLazyEl(() => import('@/pages/laboratoryInfo/Standard'))}
+              </CheckPermissions>
+            ),
+          },
+        ],
+      },
+      {
+        path: 'system-settings',
+        menu: {
+          icon: <SettingOutlined />,
+          name: '系统设置',
+        },
+        element: (
+          <CheckPermissions fallback={<Forbidden />}>
+            {createLazyEl(() => import('@/layouts/BlankLayout'))}
+          </CheckPermissions>
+        ),
+        children: [
+          {
+            path: 'department',
+            menu: {
+              name: '部门管理',
+            },
+            element: (
+              <CheckPermissions fallback={<Forbidden />}>
+                {createLazyEl(
+                  () => import('@/pages/systemSettings/Department'),
+                )}
               </CheckPermissions>
             ),
           },
