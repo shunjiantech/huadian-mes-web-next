@@ -5,6 +5,7 @@ import { useMemo } from 'react'
 import { Link, useLocation } from 'react-router-dom'
 import { useRecoilValue } from 'recoil'
 
+import logo from '@/assets/logo.svg'
 import config from '@/config'
 import BlankLayout from '@/layouts/BlankLayout'
 import routes, { RouteObjectExt } from '@/routes'
@@ -66,7 +67,7 @@ const Layout = () => {
       className="!min-h-screen"
       locale="zh-CN"
       layout="mix"
-      logo={null}
+      logo={logo}
       title={config.TITLE}
       fixedHeader
       fixSiderbar
