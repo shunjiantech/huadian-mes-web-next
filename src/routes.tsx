@@ -1,10 +1,7 @@
 import {
   ExperimentOutlined,
   FileExclamationOutlined,
-  HomeOutlined,
-  InfoCircleOutlined,
   SettingOutlined,
-  TableOutlined,
 } from '@ant-design/icons'
 import { MenuDataItem } from '@ant-design/pro-layout'
 import { Spin } from 'antd'
@@ -71,42 +68,6 @@ const routes: RouteObjectExt[] = [
       </CheckToken>
     ),
     children: [
-      {
-        path: '',
-        menu: {
-          icon: <HomeOutlined />,
-          name: '首页',
-        },
-        element: (
-          <CheckPermissions fallback={<Forbidden />}>
-            {createLazyEl(() => import('@/pages/Home'))}
-          </CheckPermissions>
-        ),
-      },
-      {
-        path: 'about',
-        menu: {
-          icon: <InfoCircleOutlined />,
-          name: '关于',
-        },
-        element: (
-          <CheckPermissions fallback={<Forbidden />}>
-            {createLazyEl(() => import('@/pages/About'))}
-          </CheckPermissions>
-        ),
-      },
-      {
-        path: 'table',
-        menu: {
-          icon: <TableOutlined />,
-          name: '表格',
-        },
-        element: (
-          <CheckPermissions fallback={<Forbidden />}>
-            {createLazyEl(() => import('@/pages/Table'))}
-          </CheckPermissions>
-        ),
-      },
       {
         path: 'test-info',
         menu: {
