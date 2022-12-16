@@ -79,7 +79,7 @@ const Login = () => {
       if (!response.data?.data?.token) {
         throw response.data.message
       }
-      // setToken(response.data.data.token)
+      setToken(response.data.data.token)
     } catch (err) {
       setSsoLoginErr(err as never)
     }
