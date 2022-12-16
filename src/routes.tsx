@@ -119,6 +119,17 @@ const routes: RouteObjectExt[] = [
         ),
         children: [
           {
+            path: 'producer',
+            menu: {
+              name: '生产厂家设置',
+            },
+            element: (
+              <CheckPermissions fallback={<Forbidden />}>
+                {createLazyEl(() => import('@/pages/testInfo/Producer'))}
+              </CheckPermissions>
+            ),
+          },
+          {
             path: 'customer',
             menu: {
               name: '委托单位设置',
