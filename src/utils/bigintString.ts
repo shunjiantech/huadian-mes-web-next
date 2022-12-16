@@ -23,13 +23,17 @@ export const stringToBigInt = (value: any) => {
 }
 
 export const urlStringToBigInt = (url: string) => {
-  const arr = url.split('/')
-  arr.forEach((value, index) => {
-    if (isBigIntStr(value)) {
-      arr[index] = value.slice(bigIntStrPrefix.length)
-    }
-  })
-  return arr.join('/')
+  return url
+    .split('/')
+    .map((item) => {
+      if (item.includes(',')) {
+        return item.split(',').map((item) => {
+          return stringToBigInt(item)
+        })
+      }
+      return stringToBigInt(item)
+    })
+    .join('/')
 }
 
 const recursion = (
