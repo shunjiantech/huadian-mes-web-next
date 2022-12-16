@@ -227,7 +227,7 @@ const Standard = () => {
       {
         title: 'PDF',
         key: 'pdf',
-        width: 60,
+        width: 80,
         hideInSearch: true,
         render: (_, record) => {
           return (
@@ -245,7 +245,7 @@ const Standard = () => {
         title: '操作',
         key: 'option',
         valueType: 'option',
-        width: 60,
+        width: 100,
         render: (_, record) => (
           <Space wrap>
             <Typography.Link
