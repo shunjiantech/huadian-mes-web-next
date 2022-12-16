@@ -1,6 +1,7 @@
 import axios from 'axios'
 
 import config from '@/config'
+import { token } from '@/store/tokenState'
 import {
   recursionBigIntToString,
   recursionStringToBigInt,
@@ -14,6 +15,12 @@ const request = axios.create({
 
 request.interceptors.request.use(
   (config) => {
+    {
+      if (token) {
+        config.headers = config.headers ?? {}
+        config.headers.Authorization = `Bearer ${token}`
+      }
+    }
     {
       // bigintString to bigint
       if (config.url) {

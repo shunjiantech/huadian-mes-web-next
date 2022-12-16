@@ -2,6 +2,16 @@ import { atom } from 'recoil'
 
 import storageEffect from '@/store/storageEffect'
 
+export let token = ''
+
+const setToken = (newValue: unknown) => {
+  if (typeof newValue === 'string') {
+    token = newValue
+  } else {
+    token = ''
+  }
+}
+
 const key = 'tokenState'
 
 const tokenState = atom<string>({
@@ -15,6 +25,10 @@ const tokenState = atom<string>({
         return typeof value === 'string' ? value : defaultValue
       },
     }),
+    ({ onSet, getLoadable }) => {
+      setToken(getLoadable(tokenState).contents)
+      onSet(setToken)
+    },
   ],
 })
 
