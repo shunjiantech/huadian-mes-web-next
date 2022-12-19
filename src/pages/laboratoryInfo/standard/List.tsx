@@ -1,28 +1,39 @@
 import { PlusOutlined } from '@ant-design/icons'
 import { PageContainer } from '@ant-design/pro-layout'
 import ProTable, { ActionType, ProColumns } from '@ant-design/pro-table'
-import { FormDialog, FormItem, FormLayout, Input } from '@formily/antd'
+import {
+  DatePicker,
+  FormDialog,
+  FormItem,
+  FormLayout,
+  Input,
+} from '@formily/antd'
 import { createSchemaField } from '@formily/react'
 import { Button, message, Popconfirm, Space, Typography } from 'antd'
 import { AxiosResponse } from 'axios'
+import dayjs from 'dayjs'
 import _ from 'lodash-es'
 import { useMemo, useRef, useState } from 'react'
 
 import request from '@/utils/request'
 
-interface IProducer {
+interface IStandard {
   id?: number | string
   name?: string
-  address?: string
-  postcode?: string
-  contact?: string
-  tel?: string
+  code?: string
+  short_name?: string
+  description?: string
+  valid_from?: number | string
+  valid_until?: number | string
+  file?: string
+  file_url?: string
 }
 
 const SchemaField = createSchemaField({
   components: {
     FormItem,
     Input,
+    DatePicker,
   },
 })
 
@@ -31,7 +42,7 @@ const schema = {
   properties: {
     name: {
       type: 'string',
-      title: '名称',
+      title: '国标名称',
       required: true,
       'x-validator': [
         {
@@ -44,10 +55,9 @@ const schema = {
         placeholder: '请输入',
       },
     },
-    address: {
+    code: {
       type: 'string',
-      title: '地址',
-      required: true,
+      title: '国标编码',
       'x-validator': [
         {
           whitespace: true,
@@ -59,24 +69,9 @@ const schema = {
         placeholder: '请输入',
       },
     },
-    postcode: {
+    short_name: {
       type: 'string',
-      title: '邮编',
-      'x-validator': [
-        {
-          pattern: '^\\d{6}$',
-          message: '不是有效的邮编',
-        },
-      ],
-      'x-decorator': 'FormItem',
-      'x-component': 'Input',
-      'x-component-props': {
-        placeholder: '请输入',
-      },
-    },
-    contact: {
-      type: 'string',
-      title: '联系人',
+      title: '国标简称',
       'x-validator': [
         {
           whitespace: true,
@@ -88,26 +83,36 @@ const schema = {
         placeholder: '请输入',
       },
     },
-    tel: {
+    description: {
       type: 'string',
-      title: '联系电话',
-      required: true,
+      title: '国标描述',
       'x-validator': [
         {
-          pattern: '^1[3456789]\\d{9}$|^0\\d{2,3}-\\d{7,8}$',
-          message: '不是有效的电话号码',
+          whitespace: true,
         },
       ],
       'x-decorator': 'FormItem',
-      'x-component': 'Input',
+      'x-component': 'Input.TextArea',
       'x-component-props': {
         placeholder: '请输入',
       },
+    },
+    '[valid_from, valid_until]': {
+      type: 'string',
+      title: '有效期',
+      required: true,
+      'x-validator': [
+        {
+          whitespace: true,
+        },
+      ],
+      'x-decorator': 'FormItem',
+      'x-component': 'DatePicker.RangePicker',
     },
   },
 }
 
-const openProducerEditor = (id?: number | string) => {
+const openStandardEditor = (id?: number | string) => {
   const dialog = FormDialog(id ? '编辑' : '新增', () => (
     <FormLayout labelCol={4} wrapperCol={20}>
       <SchemaField schema={schema} />
@@ -121,9 +126,9 @@ const openProducerEditor = (id?: number | string) => {
           Partial<{
             code: number
             message: string
-            data: IProducer
+            data: IStandard
           }>
-        > = await request.get(`/api/v1/manufacturers/${id}`)
+        > = await request.get(`/api/v1/standards/${id}`)
         if (response.data.code !== 0) {
           throw new Error(response.data.message ?? '')
         }
@@ -133,6 +138,8 @@ const openProducerEditor = (id?: number | string) => {
           data = {
             ...data,
             id: undefined,
+            valid_from: dayjs(data.valid_from).format('YYYY-MM-DD'),
+            valid_until: dayjs(data.valid_until).format('YYYY-MM-DD'),
           }
         }
         initialValues = data
@@ -143,18 +150,20 @@ const openProducerEditor = (id?: number | string) => {
     })
   }
   dialog.forConfirm(async (payload, next) => {
-    let data = _.cloneDeep<IProducer>(payload.values)
+    let data = _.cloneDeep<IStandard>(payload.values)
     {
       // data transform
       data = {
         ...data,
+        valid_from: dayjs(data.valid_from).startOf('day').valueOf(),
+        valid_until: dayjs(data.valid_until).endOf('day').valueOf(),
       }
     }
     try {
       if (id) {
-        await request.put(`/api/v1/manufacturers/${id}`, data)
+        await request.put(`/api/v1/standards/${id}`, data)
       } else {
-        await request.post('/api/v1/manufacturers', data)
+        await request.post('/api/v1/standards', data)
       }
     } catch (err) {
       message.error((err as Error).message)
@@ -165,14 +174,14 @@ const openProducerEditor = (id?: number | string) => {
   return dialog.open()
 }
 
-const Producer = () => {
+const List = () => {
   const tableActionRef = useRef<ActionType>()
 
   const [tableSelectedRowKeys, setTableSelectedRowKeys] = useState<
     (number | string)[]
   >([])
 
-  const columns = useMemo<ProColumns<IProducer>[]>(
+  const columns = useMemo<ProColumns<IStandard>[]>(
     () => [
       {
         dataIndex: 'index',
@@ -180,28 +189,57 @@ const Producer = () => {
         width: 34,
       },
       {
-        title: '名称',
+        title: '国标名称',
         dataIndex: 'name',
       },
       {
-        title: '地址',
-        dataIndex: 'address',
+        title: '国标编码',
+        dataIndex: 'code',
+        width: 80,
         hideInSearch: true,
       },
       {
-        title: '邮编',
-        dataIndex: 'postcode',
+        title: '国标简称',
+        dataIndex: 'short_name',
         hideInSearch: true,
       },
       {
-        title: '联系人',
-        dataIndex: 'contact',
+        title: '国标描述',
+        dataIndex: 'description',
         hideInSearch: true,
       },
       {
-        title: '联系电话',
-        dataIndex: 'tel',
+        title: '有效期',
+        key: 'valid_from_and_valid_until',
         hideInSearch: true,
+        render: (_, record) => {
+          return `${
+            record.valid_from
+              ? dayjs(record.valid_from).format('YYYY-MM-DD')
+              : '-'
+          } 至 ${
+            record.valid_until
+              ? dayjs(record.valid_until).format('YYYY-MM-DD')
+              : '-'
+          }`
+        },
+      },
+      {
+        title: 'PDF',
+        key: 'pdf',
+        width: 80,
+        hideInSearch: true,
+        render: (_, record) => {
+          return (
+            <Typography.Link
+              href={record.file_url}
+              target="_blank"
+              disabled={!record.file_url}
+            >
+              查看
+            </Typography.Link>
+          )
+        },
       },
       {
         title: '操作',
@@ -212,7 +250,7 @@ const Producer = () => {
           <Space wrap>
             <Typography.Link
               onClick={async () => {
-                await openProducerEditor(record.id)
+                await openStandardEditor(record.id)
                 tableActionRef.current?.reload()
               }}
             >
@@ -221,7 +259,7 @@ const Producer = () => {
             <Popconfirm
               title="您确定要删除吗？"
               onConfirm={async () => {
-                await request.delete(`/api/v1/manufacturers/${record.id}`)
+                await request.delete(`/api/v1/standards/${record.id}`)
                 tableActionRef.current?.reload()
               }}
             >
@@ -236,7 +274,7 @@ const Producer = () => {
 
   return (
     <PageContainer>
-      <ProTable<IProducer>
+      <ProTable<IStandard>
         actionRef={tableActionRef}
         request={async ({ current, pageSize, ...params }) => {
           try {
@@ -245,13 +283,13 @@ const Producer = () => {
                 code: number
                 message: string
                 data: {
-                  list: IProducer[]
+                  list: IStandard[]
                   page: number
                   page_size: number
                   total: number
                 }
               }>
-            > = await request.get('/api/v1/manufacturers', {
+            > = await request.get('/api/v1/standards', {
               params: {
                 ...params,
                 page: current,
@@ -310,7 +348,7 @@ const Producer = () => {
                 title="您确定要删除吗？"
                 onConfirm={async () => {
                   await request.delete(
-                    `/api/v1/manufacturers/${selectedRowKeys.join(',')}`,
+                    `/api/v1/standards/${selectedRowKeys.join(',')}`,
                   )
                   tableActionRef.current?.reload()
                 }}
@@ -330,7 +368,7 @@ const Producer = () => {
               type="primary"
               icon={<PlusOutlined />}
               onClick={async () => {
-                await openProducerEditor()
+                await openStandardEditor()
                 tableActionRef.current?.reload()
               }}
             >
@@ -349,4 +387,4 @@ const Producer = () => {
   )
 }
 
-export default Producer
+export default List

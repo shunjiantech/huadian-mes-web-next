@@ -83,24 +83,54 @@ const routes: RouteObjectExt[] = [
           {
             path: 'producer',
             menu: {
-              name: '生产厂家设置',
+              flatMenu: true,
             },
             element: (
               <CheckPermissions fallback={<Forbidden />}>
-                {createLazyEl(() => import('@/pages/testInfo/Producer'))}
+                {createLazyEl(() => import('@/layouts/BlankLayout'))}
               </CheckPermissions>
             ),
+            children: [
+              {
+                path: 'list',
+                menu: {
+                  name: '生产厂家设置',
+                },
+                element: (
+                  <CheckPermissions fallback={<Forbidden />}>
+                    {createLazyEl(
+                      () => import('@/pages/testInfo/producer/List'),
+                    )}
+                  </CheckPermissions>
+                ),
+              },
+            ],
           },
           {
             path: 'customer',
             menu: {
-              name: '委托单位设置',
+              flatMenu: true,
             },
             element: (
               <CheckPermissions fallback={<Forbidden />}>
-                {createLazyEl(() => import('@/pages/testInfo/Customer'))}
+                {createLazyEl(() => import('@/layouts/BlankLayout'))}
               </CheckPermissions>
             ),
+            children: [
+              {
+                path: 'list',
+                menu: {
+                  name: '委托单位设置',
+                },
+                element: (
+                  <CheckPermissions fallback={<Forbidden />}>
+                    {createLazyEl(
+                      () => import('@/pages/testInfo/customer/List'),
+                    )}
+                  </CheckPermissions>
+                ),
+              },
+            ],
           },
         ],
       },
@@ -119,13 +149,28 @@ const routes: RouteObjectExt[] = [
           {
             path: 'standard',
             menu: {
-              name: '国家标准设置',
+              flatMenu: true,
             },
             element: (
               <CheckPermissions fallback={<Forbidden />}>
-                {createLazyEl(() => import('@/pages/laboratoryInfo/Standard'))}
+                {createLazyEl(() => import('@/layouts/BlankLayout'))}
               </CheckPermissions>
             ),
+            children: [
+              {
+                path: 'list',
+                menu: {
+                  name: '国家标准设置',
+                },
+                element: (
+                  <CheckPermissions fallback={<Forbidden />}>
+                    {createLazyEl(
+                      () => import('@/pages/laboratoryInfo/standard/List'),
+                    )}
+                  </CheckPermissions>
+                ),
+              },
+            ],
           },
         ],
       },
@@ -144,15 +189,28 @@ const routes: RouteObjectExt[] = [
           {
             path: 'department',
             menu: {
-              name: '部门管理',
+              flatMenu: true,
             },
             element: (
               <CheckPermissions fallback={<Forbidden />}>
-                {createLazyEl(
-                  () => import('@/pages/systemSettings/Department'),
-                )}
+                {createLazyEl(() => import('@/layouts/BlankLayout'))}
               </CheckPermissions>
             ),
+            children: [
+              {
+                path: 'list',
+                menu: {
+                  name: '部门管理',
+                },
+                element: (
+                  <CheckPermissions fallback={<Forbidden />}>
+                    {createLazyEl(
+                      () => import('@/pages/systemSettings/department/List'),
+                    )}
+                  </CheckPermissions>
+                ),
+              },
+            ],
           },
         ],
       },

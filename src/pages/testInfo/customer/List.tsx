@@ -6,17 +6,17 @@ import { createSchemaField } from '@formily/react'
 import { Button, message, Popconfirm, Space, Typography } from 'antd'
 import { AxiosResponse } from 'axios'
 import _ from 'lodash-es'
-import { useMemo, useRef } from 'react'
+import { useMemo, useRef, useState } from 'react'
 
 import request from '@/utils/request'
 
-interface IDepartment {
-  pid?: number | string
+interface ICustomer {
   id?: number | string
   name?: string
-  code?: string
-  description?: string
-  children?: IDepartment[]
+  address?: string
+  postcode?: string
+  contact?: string
+  tel?: string
 }
 
 const SchemaField = createSchemaField({
@@ -31,7 +31,7 @@ const schema = {
   properties: {
     name: {
       type: 'string',
-      title: '部门名称',
+      title: '名称',
       required: true,
       'x-validator': [
         {
@@ -44,9 +44,10 @@ const schema = {
         placeholder: '请输入',
       },
     },
-    code: {
+    address: {
       type: 'string',
-      title: '部门编码',
+      title: '地址',
+      required: true,
       'x-validator': [
         {
           whitespace: true,
@@ -58,16 +59,47 @@ const schema = {
         placeholder: '请输入',
       },
     },
-    description: {
+    postcode: {
       type: 'string',
-      title: '部门描述',
+      title: '邮编',
+      'x-validator': [
+        {
+          pattern: '^\\d{6}$',
+          message: '不是有效的邮编',
+        },
+      ],
+      'x-decorator': 'FormItem',
+      'x-component': 'Input',
+      'x-component-props': {
+        placeholder: '请输入',
+      },
+    },
+    contact: {
+      type: 'string',
+      title: '联系人',
       'x-validator': [
         {
           whitespace: true,
         },
       ],
       'x-decorator': 'FormItem',
-      'x-component': 'Input.TextArea',
+      'x-component': 'Input',
+      'x-component-props': {
+        placeholder: '请输入',
+      },
+    },
+    tel: {
+      type: 'string',
+      title: '联系电话',
+      required: true,
+      'x-validator': [
+        {
+          pattern: '^1[3456789]\\d{9}$|^0\\d{2,3}-\\d{7,8}$',
+          message: '不是有效的电话号码',
+        },
+      ],
+      'x-decorator': 'FormItem',
+      'x-component': 'Input',
       'x-component-props': {
         placeholder: '请输入',
       },
@@ -75,15 +107,12 @@ const schema = {
   },
 }
 
-const openDepartmentEditor = (id?: number | string, parent?: IDepartment) => {
-  const dialog = FormDialog(
-    id ? '编辑' : parent ? `${parent.name} - 新增子部门` : '新增',
-    () => (
-      <FormLayout labelCol={4} wrapperCol={20}>
-        <SchemaField schema={schema} />
-      </FormLayout>
-    ),
-  )
+const openCustomerEditor = (id?: number | string) => {
+  const dialog = FormDialog(id ? '编辑' : '新增', () => (
+    <FormLayout labelCol={4} wrapperCol={20}>
+      <SchemaField schema={schema} />
+    </FormLayout>
+  ))
   if (id) {
     dialog.forOpen(async (payload, next) => {
       let initialValues
@@ -92,9 +121,9 @@ const openDepartmentEditor = (id?: number | string, parent?: IDepartment) => {
           Partial<{
             code: number
             message: string
-            data: IDepartment
+            data: ICustomer
           }>
-        > = await request.get(`/api/v1/departments/${id}`)
+        > = await request.get(`/api/v1/entrusting_parties/${id}`)
         if (response.data.code !== 0) {
           throw new Error(response.data.message ?? '')
         }
@@ -114,18 +143,18 @@ const openDepartmentEditor = (id?: number | string, parent?: IDepartment) => {
     })
   }
   dialog.forConfirm(async (payload, next) => {
-    const data = _.cloneDeep<IDepartment>(payload.values)
+    let data = _.cloneDeep<ICustomer>(payload.values)
     {
       // data transform
-      if (!id && parent) {
-        data.pid = parent.id
+      data = {
+        ...data,
       }
     }
     try {
       if (id) {
-        await request.put(`/api/v1/departments/${id}`, data)
+        await request.put(`/api/v1/entrusting_parties/${id}`, data)
       } else {
-        await request.post('/api/v1/departments', data)
+        await request.post('/api/v1/entrusting_parties', data)
       }
     } catch (err) {
       message.error((err as Error).message)
@@ -136,49 +165,54 @@ const openDepartmentEditor = (id?: number | string, parent?: IDepartment) => {
   return dialog.open()
 }
 
-const Department = () => {
+const List = () => {
   const tableActionRef = useRef<ActionType>()
 
-  const columns = useMemo<ProColumns<IDepartment>[]>(
+  const [tableSelectedRowKeys, setTableSelectedRowKeys] = useState<
+    (number | string)[]
+  >([])
+
+  const columns = useMemo<ProColumns<ICustomer>[]>(
     () => [
       {
         dataIndex: 'index',
         valueType: 'indexBorder',
-        width: 76,
+        width: 34,
       },
       {
-        title: '部门名称',
+        title: '名称',
         dataIndex: 'name',
       },
       {
-        title: '部门编码',
-        dataIndex: 'code',
+        title: '地址',
+        dataIndex: 'address',
         hideInSearch: true,
       },
       {
-        title: '部门描述',
-        dataIndex: 'description',
+        title: '邮编',
+        dataIndex: 'postcode',
+        hideInSearch: true,
+      },
+      {
+        title: '联系人',
+        dataIndex: 'contact',
+        hideInSearch: true,
+      },
+      {
+        title: '联系电话',
+        dataIndex: 'tel',
         hideInSearch: true,
       },
       {
         title: '操作',
         key: 'option',
         valueType: 'option',
-        width: 180,
+        width: 100,
         render: (_, record) => (
           <Space wrap>
             <Typography.Link
-              disabled={!!record.pid}
               onClick={async () => {
-                await openDepartmentEditor(undefined, record)
-                tableActionRef.current?.reload()
-              }}
-            >
-              新增子部门
-            </Typography.Link>
-            <Typography.Link
-              onClick={async () => {
-                await openDepartmentEditor(record.id)
+                await openCustomerEditor(record.id)
                 tableActionRef.current?.reload()
               }}
             >
@@ -187,7 +221,7 @@ const Department = () => {
             <Popconfirm
               title="您确定要删除吗？"
               onConfirm={async () => {
-                await request.delete(`/api/v1/departments/${record.id}`)
+                await request.delete(`/api/v1/entrusting_parties/${record.id}`)
                 tableActionRef.current?.reload()
               }}
             >
@@ -202,25 +236,50 @@ const Department = () => {
 
   return (
     <PageContainer>
-      <ProTable<IDepartment>
+      <ProTable<ICustomer>
         actionRef={tableActionRef}
-        request={async (params) => {
+        request={async ({ current, pageSize, ...params }) => {
           try {
             const response: AxiosResponse<
               Partial<{
                 code: number
                 message: string
-                data: IDepartment[]
+                data: {
+                  list: ICustomer[]
+                  page: number
+                  page_size: number
+                  total: number
+                }
               }>
-            > = await request.get('/api/v1/departments/tree', {
-              params,
+            > = await request.get('/api/v1/entrusting_parties', {
+              params: {
+                ...params,
+                page: current,
+                page_size: pageSize,
+              },
             })
             if (response.data.code !== 0) {
               throw new Error(response.data.message ?? '')
             }
-            const list = response.data.data ?? []
+            const list = response.data.data?.list ?? []
+            const total = response.data.data?.total ?? 0
+            if (current && pageSize) {
+              const maxPage = Math.ceil(total / pageSize)
+              if (current > maxPage) {
+                tableActionRef.current?.reload(true)
+                return {
+                  success: false,
+                }
+              }
+            }
+            setTableSelectedRowKeys((tableSelectedRowKeys) => {
+              return tableSelectedRowKeys.filter((key) => {
+                return list.find(({ id }) => id === key)
+              })
+            })
             return {
               data: list,
+              total,
               success: true,
             }
           } catch (err) {
@@ -237,6 +296,32 @@ const Department = () => {
           syncToInitialValues: false,
         }}
         rowKey="id"
+        rowSelection={{
+          alwaysShowAlert: true,
+          selectedRowKeys: tableSelectedRowKeys,
+          onChange: (selectedRowKeys) => {
+            setTableSelectedRowKeys(selectedRowKeys)
+          },
+        }}
+        tableAlertOptionRender={({ selectedRowKeys }) => {
+          return (
+            <Space>
+              <Popconfirm
+                title="您确定要删除吗？"
+                onConfirm={async () => {
+                  await request.delete(
+                    `/api/v1/entrusting_parties/${selectedRowKeys.join(',')}`,
+                  )
+                  tableActionRef.current?.reload()
+                }}
+              >
+                <Typography.Link disabled={selectedRowKeys.length === 0}>
+                  批量删除
+                </Typography.Link>
+              </Popconfirm>
+            </Space>
+          )
+        }}
         toolbar={{
           title: '数据列表',
           actions: [
@@ -245,7 +330,7 @@ const Department = () => {
               type="primary"
               icon={<PlusOutlined />}
               onClick={async () => {
-                await openDepartmentEditor()
+                await openCustomerEditor()
                 tableActionRef.current?.reload()
               }}
             >
@@ -254,11 +339,14 @@ const Department = () => {
           ],
         }}
         options={false}
-        pagination={false}
+        pagination={{
+          size: 'default',
+          defaultPageSize: 10,
+        }}
       />
       <FormDialog.Portal />
     </PageContainer>
   )
 }
 
-export default Department
+export default List

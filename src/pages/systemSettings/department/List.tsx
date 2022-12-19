@@ -6,17 +6,17 @@ import { createSchemaField } from '@formily/react'
 import { Button, message, Popconfirm, Space, Typography } from 'antd'
 import { AxiosResponse } from 'axios'
 import _ from 'lodash-es'
-import { useMemo, useRef, useState } from 'react'
+import { useMemo, useRef } from 'react'
 
 import request from '@/utils/request'
 
-interface ICustomer {
+interface IDepartment {
+  pid?: number | string
   id?: number | string
   name?: string
-  address?: string
-  postcode?: string
-  contact?: string
-  tel?: string
+  code?: string
+  description?: string
+  children?: IDepartment[]
 }
 
 const SchemaField = createSchemaField({
@@ -31,7 +31,7 @@ const schema = {
   properties: {
     name: {
       type: 'string',
-      title: '名称',
+      title: '部门名称',
       required: true,
       'x-validator': [
         {
@@ -44,10 +44,9 @@ const schema = {
         placeholder: '请输入',
       },
     },
-    address: {
+    code: {
       type: 'string',
-      title: '地址',
-      required: true,
+      title: '部门编码',
       'x-validator': [
         {
           whitespace: true,
@@ -59,47 +58,16 @@ const schema = {
         placeholder: '请输入',
       },
     },
-    postcode: {
+    description: {
       type: 'string',
-      title: '邮编',
-      'x-validator': [
-        {
-          pattern: '^\\d{6}$',
-          message: '不是有效的邮编',
-        },
-      ],
-      'x-decorator': 'FormItem',
-      'x-component': 'Input',
-      'x-component-props': {
-        placeholder: '请输入',
-      },
-    },
-    contact: {
-      type: 'string',
-      title: '联系人',
+      title: '部门描述',
       'x-validator': [
         {
           whitespace: true,
         },
       ],
       'x-decorator': 'FormItem',
-      'x-component': 'Input',
-      'x-component-props': {
-        placeholder: '请输入',
-      },
-    },
-    tel: {
-      type: 'string',
-      title: '联系电话',
-      required: true,
-      'x-validator': [
-        {
-          pattern: '^1[3456789]\\d{9}$|^0\\d{2,3}-\\d{7,8}$',
-          message: '不是有效的电话号码',
-        },
-      ],
-      'x-decorator': 'FormItem',
-      'x-component': 'Input',
+      'x-component': 'Input.TextArea',
       'x-component-props': {
         placeholder: '请输入',
       },
@@ -107,12 +75,15 @@ const schema = {
   },
 }
 
-const openCustomerEditor = (id?: number | string) => {
-  const dialog = FormDialog(id ? '编辑' : '新增', () => (
-    <FormLayout labelCol={4} wrapperCol={20}>
-      <SchemaField schema={schema} />
-    </FormLayout>
-  ))
+const openDepartmentEditor = (id?: number | string, parent?: IDepartment) => {
+  const dialog = FormDialog(
+    id ? '编辑' : parent ? `${parent.name} - 新增子部门` : '新增',
+    () => (
+      <FormLayout labelCol={4} wrapperCol={20}>
+        <SchemaField schema={schema} />
+      </FormLayout>
+    ),
+  )
   if (id) {
     dialog.forOpen(async (payload, next) => {
       let initialValues
@@ -121,9 +92,9 @@ const openCustomerEditor = (id?: number | string) => {
           Partial<{
             code: number
             message: string
-            data: ICustomer
+            data: IDepartment
           }>
-        > = await request.get(`/api/v1/entrusting_parties/${id}`)
+        > = await request.get(`/api/v1/departments/${id}`)
         if (response.data.code !== 0) {
           throw new Error(response.data.message ?? '')
         }
@@ -143,18 +114,18 @@ const openCustomerEditor = (id?: number | string) => {
     })
   }
   dialog.forConfirm(async (payload, next) => {
-    let data = _.cloneDeep<ICustomer>(payload.values)
+    const data = _.cloneDeep<IDepartment>(payload.values)
     {
       // data transform
-      data = {
-        ...data,
+      if (!id && parent) {
+        data.pid = parent.id
       }
     }
     try {
       if (id) {
-        await request.put(`/api/v1/entrusting_parties/${id}`, data)
+        await request.put(`/api/v1/departments/${id}`, data)
       } else {
-        await request.post('/api/v1/entrusting_parties', data)
+        await request.post('/api/v1/departments', data)
       }
     } catch (err) {
       message.error((err as Error).message)
@@ -165,54 +136,49 @@ const openCustomerEditor = (id?: number | string) => {
   return dialog.open()
 }
 
-const Customer = () => {
+const List = () => {
   const tableActionRef = useRef<ActionType>()
 
-  const [tableSelectedRowKeys, setTableSelectedRowKeys] = useState<
-    (number | string)[]
-  >([])
-
-  const columns = useMemo<ProColumns<ICustomer>[]>(
+  const columns = useMemo<ProColumns<IDepartment>[]>(
     () => [
       {
         dataIndex: 'index',
         valueType: 'indexBorder',
-        width: 34,
+        width: 76,
       },
       {
-        title: '名称',
+        title: '部门名称',
         dataIndex: 'name',
       },
       {
-        title: '地址',
-        dataIndex: 'address',
+        title: '部门编码',
+        dataIndex: 'code',
         hideInSearch: true,
       },
       {
-        title: '邮编',
-        dataIndex: 'postcode',
-        hideInSearch: true,
-      },
-      {
-        title: '联系人',
-        dataIndex: 'contact',
-        hideInSearch: true,
-      },
-      {
-        title: '联系电话',
-        dataIndex: 'tel',
+        title: '部门描述',
+        dataIndex: 'description',
         hideInSearch: true,
       },
       {
         title: '操作',
         key: 'option',
         valueType: 'option',
-        width: 100,
+        width: 180,
         render: (_, record) => (
           <Space wrap>
             <Typography.Link
+              disabled={!!record.pid}
               onClick={async () => {
-                await openCustomerEditor(record.id)
+                await openDepartmentEditor(undefined, record)
+                tableActionRef.current?.reload()
+              }}
+            >
+              新增子部门
+            </Typography.Link>
+            <Typography.Link
+              onClick={async () => {
+                await openDepartmentEditor(record.id)
                 tableActionRef.current?.reload()
               }}
             >
@@ -221,7 +187,7 @@ const Customer = () => {
             <Popconfirm
               title="您确定要删除吗？"
               onConfirm={async () => {
-                await request.delete(`/api/v1/entrusting_parties/${record.id}`)
+                await request.delete(`/api/v1/departments/${record.id}`)
                 tableActionRef.current?.reload()
               }}
             >
@@ -236,50 +202,25 @@ const Customer = () => {
 
   return (
     <PageContainer>
-      <ProTable<ICustomer>
+      <ProTable<IDepartment>
         actionRef={tableActionRef}
-        request={async ({ current, pageSize, ...params }) => {
+        request={async (params) => {
           try {
             const response: AxiosResponse<
               Partial<{
                 code: number
                 message: string
-                data: {
-                  list: ICustomer[]
-                  page: number
-                  page_size: number
-                  total: number
-                }
+                data: IDepartment[]
               }>
-            > = await request.get('/api/v1/entrusting_parties', {
-              params: {
-                ...params,
-                page: current,
-                page_size: pageSize,
-              },
+            > = await request.get('/api/v1/departments/tree', {
+              params,
             })
             if (response.data.code !== 0) {
               throw new Error(response.data.message ?? '')
             }
-            const list = response.data.data?.list ?? []
-            const total = response.data.data?.total ?? 0
-            if (current && pageSize) {
-              const maxPage = Math.ceil(total / pageSize)
-              if (current > maxPage) {
-                tableActionRef.current?.reload(true)
-                return {
-                  success: false,
-                }
-              }
-            }
-            setTableSelectedRowKeys((tableSelectedRowKeys) => {
-              return tableSelectedRowKeys.filter((key) => {
-                return list.find(({ id }) => id === key)
-              })
-            })
+            const list = response.data.data ?? []
             return {
               data: list,
-              total,
               success: true,
             }
           } catch (err) {
@@ -296,32 +237,6 @@ const Customer = () => {
           syncToInitialValues: false,
         }}
         rowKey="id"
-        rowSelection={{
-          alwaysShowAlert: true,
-          selectedRowKeys: tableSelectedRowKeys,
-          onChange: (selectedRowKeys) => {
-            setTableSelectedRowKeys(selectedRowKeys)
-          },
-        }}
-        tableAlertOptionRender={({ selectedRowKeys }) => {
-          return (
-            <Space>
-              <Popconfirm
-                title="您确定要删除吗？"
-                onConfirm={async () => {
-                  await request.delete(
-                    `/api/v1/entrusting_parties/${selectedRowKeys.join(',')}`,
-                  )
-                  tableActionRef.current?.reload()
-                }}
-              >
-                <Typography.Link disabled={selectedRowKeys.length === 0}>
-                  批量删除
-                </Typography.Link>
-              </Popconfirm>
-            </Space>
-          )
-        }}
         toolbar={{
           title: '数据列表',
           actions: [
@@ -330,7 +245,7 @@ const Customer = () => {
               type="primary"
               icon={<PlusOutlined />}
               onClick={async () => {
-                await openCustomerEditor()
+                await openDepartmentEditor()
                 tableActionRef.current?.reload()
               }}
             >
@@ -339,14 +254,11 @@ const Customer = () => {
           ],
         }}
         options={false}
-        pagination={{
-          size: 'default',
-          defaultPageSize: 10,
-        }}
+        pagination={false}
       />
       <FormDialog.Portal />
     </PageContainer>
   )
 }
 
-export default Customer
+export default List
