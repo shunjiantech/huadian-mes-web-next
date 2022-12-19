@@ -265,7 +265,7 @@ const List = () => {
             const total = response.data.data?.total ?? 0
             if (current && pageSize) {
               const maxPage = Math.ceil(total / pageSize)
-              if (current > maxPage) {
+              if (current > 1 && current > maxPage) {
                 tableActionRef.current?.reload(true)
                 return {
                   success: false,
