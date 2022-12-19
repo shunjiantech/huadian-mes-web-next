@@ -4,8 +4,8 @@ import _ from 'lodash-es'
 const bigIntStrPrefix = '__bigint__'
 const bigIntStrTestReg = new RegExp(`^${bigIntStrPrefix}\\d+$`)
 
-const isBigInt = (value: any) => typeof value === 'bigint'
-const isBigIntStr = (value: any) =>
+export const isBigInt = (value: any) => typeof value === 'bigint'
+export const isBigIntStr = (value: any) =>
   typeof value === 'string' && bigIntStrTestReg.test(value)
 
 export const bigIntToString = (value: any) => {
