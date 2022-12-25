@@ -150,8 +150,9 @@ const schema = {
       },
       'x-component': 'TreeSelect',
       'x-component-props': {
-        multiple: true,
         placeholder: '请选择',
+        multiple: true,
+        treeDefaultExpandAll: true,
       },
       'x-reactions': ['{{useSyncDataSource(productTypesTreeData)}}'],
     },
