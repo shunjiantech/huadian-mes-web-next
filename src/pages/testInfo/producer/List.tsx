@@ -182,52 +182,58 @@ const List = () => {
       {
         title: '名称',
         dataIndex: 'name',
+        render: (dom) => <div className="min-w-14">{dom}</div>,
       },
       {
         title: '地址',
         dataIndex: 'address',
         hideInSearch: true,
+        render: (dom) => <div className="min-w-14">{dom}</div>,
       },
       {
         title: '邮编',
         dataIndex: 'postcode',
         hideInSearch: true,
+        render: (dom) => <div className="min-w-14">{dom}</div>,
       },
       {
         title: '联系人',
         dataIndex: 'contact',
         hideInSearch: true,
+        render: (dom) => <div className="min-w-14">{dom}</div>,
       },
       {
         title: '联系电话',
         dataIndex: 'tel',
         hideInSearch: true,
+        render: (dom) => <div className="min-w-14">{dom}</div>,
       },
       {
         title: '操作',
         key: 'option',
         valueType: 'option',
-        width: 100,
-        render: (_, record) => (
-          <Space wrap>
-            <Typography.Link
-              onClick={async () => {
-                await openProducerEditor(record.id)
-                tableActionRef.current?.reload()
-              }}
-            >
-              编辑
-            </Typography.Link>
-            <Popconfirm
-              title="您确定要删除吗？"
-              onConfirm={async () => {
-                await request.delete(`/api/v1/manufacturers/${record.id}`)
-                tableActionRef.current?.reload()
-              }}
-            >
-              <Typography.Link>删除</Typography.Link>
-            </Popconfirm>
-          </Space>
+        render: (dom, record) => (
+          <div className="min-w-16">
+            <Space size={['small', 0]} wrap>
+              <Typography.Link
+                onClick={async () => {
+                  await openProducerEditor(record.id)
+                  tableActionRef.current?.reload()
+                }}
+              >
+                编辑
+              </Typography.Link>
+              <Popconfirm
+                title="您确定要删除吗？"
+                onConfirm={async () => {
+                  await request.delete(`/api/v1/manufacturers/${record.id}`)
+                  tableActionRef.current?.reload()
+                }}
+              >
+                <Typography.Link>删除</Typography.Link>
+              </Popconfirm>
+            </Space>
+          </div>
         ),
       },
     ],

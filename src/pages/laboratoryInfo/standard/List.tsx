@@ -191,46 +191,48 @@ const List = () => {
       {
         title: '国标名称',
         dataIndex: 'name',
+        render: (dom) => <div className="min-w-14">{dom}</div>,
       },
       {
         title: '国标编码',
         dataIndex: 'code',
-        width: 80,
         hideInSearch: true,
+        render: (dom) => <div className="min-w-14">{dom}</div>,
       },
       {
         title: '国标简称',
         dataIndex: 'short_name',
         hideInSearch: true,
+        render: (dom) => <div className="min-w-14">{dom}</div>,
       },
       {
         title: '国标描述',
         dataIndex: 'description',
         hideInSearch: true,
+        render: (dom) => <div className="min-w-14">{dom}</div>,
       },
       {
         title: '有效期',
         key: 'valid_from_and_valid_until',
         hideInSearch: true,
-        render: (_, record) => {
-          return `${
-            record.valid_from
+        render: (dom, record) => (
+          <div className="min-w-14">
+            {record.valid_from
               ? dayjs(record.valid_from).format('YYYY-MM-DD')
-              : '-'
-          } 至 ${
-            record.valid_until
+              : '-'}{' '}
+            至{' '}
+            {record.valid_until
               ? dayjs(record.valid_until).format('YYYY-MM-DD')
-              : '-'
-          }`
-        },
+              : '-'}
+          </div>
+        ),
       },
       {
         title: 'PDF',
         key: 'pdf',
-        width: 80,
         hideInSearch: true,
-        render: (_, record) => {
-          return (
+        render: (dom, record) => (
+          <div className="min-w-7">
             <Typography.Link
               href={record.file_url}
               target="_blank"
@@ -238,34 +240,35 @@ const List = () => {
             >
               查看
             </Typography.Link>
-          )
-        },
+          </div>
+        ),
       },
       {
         title: '操作',
         key: 'option',
         valueType: 'option',
-        width: 100,
-        render: (_, record) => (
-          <Space wrap>
-            <Typography.Link
-              onClick={async () => {
-                await openStandardEditor(record.id)
-                tableActionRef.current?.reload()
-              }}
-            >
-              编辑
-            </Typography.Link>
-            <Popconfirm
-              title="您确定要删除吗？"
-              onConfirm={async () => {
-                await request.delete(`/api/v1/standards/${record.id}`)
-                tableActionRef.current?.reload()
-              }}
-            >
-              <Typography.Link>删除</Typography.Link>
-            </Popconfirm>
-          </Space>
+        render: (dom, record) => (
+          <div className="min-w-16">
+            <Space size={['small', 0]} wrap>
+              <Typography.Link
+                onClick={async () => {
+                  await openStandardEditor(record.id)
+                  tableActionRef.current?.reload()
+                }}
+              >
+                编辑
+              </Typography.Link>
+              <Popconfirm
+                title="您确定要删除吗？"
+                onConfirm={async () => {
+                  await request.delete(`/api/v1/standards/${record.id}`)
+                  tableActionRef.current?.reload()
+                }}
+              >
+                <Typography.Link>删除</Typography.Link>
+              </Popconfirm>
+            </Space>
+          </div>
         ),
       },
     ],

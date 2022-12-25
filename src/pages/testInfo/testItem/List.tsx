@@ -338,20 +338,24 @@ const List = () => {
       {
         title: '试验名称',
         dataIndex: 'name',
+        render: (dom) => <div className="min-w-14">{dom}</div>,
       },
       {
         title: '英文名称',
         dataIndex: 'ename',
+        render: (dom) => <div className="min-w-14">{dom}</div>,
       },
       {
         title: '显示名称',
         dataIndex: 'display_name',
         hideInSearch: true,
+        render: (dom) => <div className="min-w-14">{dom}</div>,
       },
       {
         title: '试验内容',
         dataIndex: 'content',
         hideInSearch: true,
+        render: (dom) => <div className="min-w-14">{dom}</div>,
       },
       {
         title: '试验类型',
@@ -364,46 +368,49 @@ const List = () => {
         title: '试验类型',
         dataIndex: 'test_item_type',
         hideInSearch: true,
+        render: (dom) => <div className="min-w-14">{dom}</div>,
       },
       {
         title: '描述',
         dataIndex: 'description',
         hideInSearch: true,
+        render: (dom) => <div className="min-w-14">{dom}</div>,
       },
       {
         title: '操作',
         key: 'option',
         valueType: 'option',
-        width: 160,
-        render: (_, record) => (
-          <Space wrap>
-            <Typography.Link
-              disabled={!!record.pid}
-              onClick={async () => {
-                await openTestItemEditor(undefined, record)
-                tableActionRef.current?.reload()
-              }}
-            >
-              新增子项
-            </Typography.Link>
-            <Typography.Link
-              onClick={async () => {
-                await openTestItemEditor(record.id)
-                tableActionRef.current?.reload()
-              }}
-            >
-              编辑
-            </Typography.Link>
-            <Popconfirm
-              title="您确定要删除吗？"
-              onConfirm={async () => {
-                await request.delete(`/api/v1/test_items/${record.id}`)
-                tableActionRef.current?.reload()
-              }}
-            >
-              <Typography.Link>删除</Typography.Link>
-            </Popconfirm>
-          </Space>
+        render: (dom, record) => (
+          <div className="min-w-16">
+            <Space size={['small', 0]} wrap>
+              <Typography.Link
+                disabled={!!record.pid}
+                onClick={async () => {
+                  await openTestItemEditor(undefined, record)
+                  tableActionRef.current?.reload()
+                }}
+              >
+                新增子项
+              </Typography.Link>
+              <Typography.Link
+                onClick={async () => {
+                  await openTestItemEditor(record.id)
+                  tableActionRef.current?.reload()
+                }}
+              >
+                编辑
+              </Typography.Link>
+              <Popconfirm
+                title="您确定要删除吗？"
+                onConfirm={async () => {
+                  await request.delete(`/api/v1/test_items/${record.id}`)
+                  tableActionRef.current?.reload()
+                }}
+              >
+                <Typography.Link>删除</Typography.Link>
+              </Popconfirm>
+            </Space>
+          </div>
         ),
       },
       {
@@ -489,7 +496,7 @@ const List = () => {
             </Space>
           )
         }}
-        tableRender={(_, dom) => {
+        tableRender={(props, dom) => {
           return (
             <div className="flex">
               <div className="flex-none w-240px mr-4 pt-1 bg-white rounded overflow-hidden">

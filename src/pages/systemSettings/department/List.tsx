@@ -149,51 +149,55 @@ const List = () => {
       {
         title: '部门名称',
         dataIndex: 'name',
+        render: (dom) => <div className="min-w-14">{dom}</div>,
       },
       {
         title: '部门编码',
         dataIndex: 'code',
         hideInSearch: true,
+        render: (dom) => <div className="min-w-14">{dom}</div>,
       },
       {
         title: '部门描述',
         dataIndex: 'description',
         hideInSearch: true,
+        render: (dom) => <div className="min-w-14">{dom}</div>,
       },
       {
         title: '操作',
         key: 'option',
         valueType: 'option',
-        width: 180,
-        render: (_, record) => (
-          <Space wrap>
-            <Typography.Link
-              disabled={!!record.pid}
-              onClick={async () => {
-                await openDepartmentEditor(undefined, record)
-                tableActionRef.current?.reload()
-              }}
-            >
-              新增子部门
-            </Typography.Link>
-            <Typography.Link
-              onClick={async () => {
-                await openDepartmentEditor(record.id)
-                tableActionRef.current?.reload()
-              }}
-            >
-              编辑
-            </Typography.Link>
-            <Popconfirm
-              title="您确定要删除吗？"
-              onConfirm={async () => {
-                await request.delete(`/api/v1/departments/${record.id}`)
-                tableActionRef.current?.reload()
-              }}
-            >
-              <Typography.Link>删除</Typography.Link>
-            </Popconfirm>
-          </Space>
+        render: (dom, record) => (
+          <div className="min-w-18">
+            <Space size={['small', 0]} wrap>
+              <Typography.Link
+                disabled={!!record.pid}
+                onClick={async () => {
+                  await openDepartmentEditor(undefined, record)
+                  tableActionRef.current?.reload()
+                }}
+              >
+                新增子部门
+              </Typography.Link>
+              <Typography.Link
+                onClick={async () => {
+                  await openDepartmentEditor(record.id)
+                  tableActionRef.current?.reload()
+                }}
+              >
+                编辑
+              </Typography.Link>
+              <Popconfirm
+                title="您确定要删除吗？"
+                onConfirm={async () => {
+                  await request.delete(`/api/v1/departments/${record.id}`)
+                  tableActionRef.current?.reload()
+                }}
+              >
+                <Typography.Link>删除</Typography.Link>
+              </Popconfirm>
+            </Space>
+          </div>
         ),
       },
     ],
