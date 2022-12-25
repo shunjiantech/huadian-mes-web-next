@@ -23,7 +23,7 @@ import { DataNode as AntdTreeDataNode } from 'antd/es/tree'
 import { AxiosResponse } from 'axios'
 import _ from 'lodash-es'
 import queryString from 'query-string'
-import { startTransition, useMemo, useRef, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { useLocation } from 'react-router-dom'
 import { useRecoilValue } from 'recoil'
 
@@ -197,6 +197,8 @@ const openTestItemEditor = (id?: number | string, parent?: ITestItem) => {
           children: children?.map(({ id, name }) => ({
             label: name,
             value: id,
+            selectable: true,
+            isLeaf: true,
           })),
         }))
       }, [productTypes])
@@ -275,29 +277,28 @@ const List = () => {
 
   const [selectedProductType, setSelectedProductType] = useState<
     string | number | undefined
-  >(
-    (() => {
-      let result
-      const queryProductType = queryString.parse(
-        location.search,
-      ).device_category_id
-      if (typeof queryProductType === 'string') {
-        if (isBigIntStr(queryProductType)) {
-          result = queryProductType
-        }
-        try {
-          const temp = parseInt(queryProductType)
-          if (isNaN(temp)) {
-            throw new Error()
-          }
-          result = temp
-        } catch (err) {
-          // NaN pass
-        }
+  >()
+
+  useEffect(() => {
+    // sync: url to selectedProductType
+    const queryProductType = queryString.parse(
+      location.search,
+    ).device_category_id
+    if (typeof queryProductType === 'string') {
+      if (isBigIntStr(queryProductType)) {
+        setSelectedProductType(queryProductType)
+      } else if (
+        !isNaN(Number(queryProductType)) &&
+        `${Number(queryProductType)}` === queryProductType
+      ) {
+        setSelectedProductType(Number(queryProductType))
+      } else {
+        setSelectedProductType('all')
       }
-      return result
-    })(),
-  )
+    } else {
+      setSelectedProductType('all')
+    }
+  }, [])
 
   const tableFormRef = useRef<FormInstance>()
   const tableActionRef = useRef<ActionType>()
@@ -319,6 +320,8 @@ const List = () => {
         children: children?.map(({ id, name }) => ({
           key: id,
           title: name,
+          selectable: true,
+          isLeaf: true,
         })),
       })),
     ]
@@ -414,14 +417,36 @@ const List = () => {
         ),
       },
       {
+        title: '产品种类',
         dataIndex: 'device_category_id',
         hideInTable: true,
-        formItemProps: {
-          hidden: true,
-        },
+        renderFormItem: () => (
+          <TreeSelect
+            treeData={[
+              ...productTypes.map(({ id, name, children }) => ({
+                key: id,
+                value: id,
+                title: name,
+                selectable: false,
+                isLeaf: false,
+                children: children?.map(({ id, name }) => ({
+                  key: id,
+                  value: id,
+                  title: name,
+                  selectable: true,
+                  isLeaf: true,
+                })),
+              })),
+            ]}
+            treeDefaultExpandAll
+            allowClear
+            showSearch
+            placeholder="请选择"
+          />
+        ),
       },
     ],
-    [tableActionRef, testItemTypes],
+    [tableActionRef, testItemTypes, productTypes],
   )
 
   return (
@@ -463,11 +488,16 @@ const List = () => {
         columns={columns}
         columnEmptyText={false}
         form={{
-          syncToUrl: true,
+          syncToUrl: (values, type) => {
+            {
+              // sync to selectedProductType
+              if (type === 'set') {
+                setSelectedProductType(values.device_category_id ?? 'all')
+              }
+            }
+            return values
+          },
           syncToInitialValues: false,
-        }}
-        onReset={() => {
-          setSelectedProductType(undefined)
         }}
         rowKey="id"
         rowSelection={{
@@ -501,19 +531,18 @@ const List = () => {
             <div className="flex">
               <div className="flex-none w-240px mr-4 pt-1 bg-white rounded overflow-hidden">
                 <Tree.DirectoryTree
-                  selectedKeys={[selectedProductType ?? 'all']}
+                  selectedKeys={
+                    selectedProductType ? [selectedProductType] : []
+                  }
                   treeData={productTypesTreeData}
                   defaultExpandAll
                   icon={null}
                   onSelect={([selectedKey]) => {
-                    setSelectedProductType(selectedKey)
-                    startTransition(() => {
-                      tableFormRef.current?.setFieldValue(
-                        'device_category_id',
-                        selectedKey === 'all' ? undefined : `${selectedKey}`,
-                      )
-                      tableFormRef.current?.submit()
-                    })
+                    tableFormRef.current?.setFieldValue(
+                      'device_category_id',
+                      selectedKey === 'all' ? undefined : selectedKey,
+                    )
+                    tableFormRef.current?.submit()
                   }}
                 />
               </div>
