@@ -114,7 +114,7 @@ const schema = {
 
 const openStandardEditor = (id?: number | string) => {
   const dialog = FormDialog(id ? '编辑' : '新增', () => (
-    <FormLayout labelCol={4} wrapperCol={20}>
+    <FormLayout labelCol={5} wrapperCol={19}>
       <SchemaField schema={schema} />
     </FormLayout>
   ))

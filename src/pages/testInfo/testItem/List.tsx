@@ -147,7 +147,6 @@ const schema = {
       'x-decorator': 'FormItem',
       'x-decorator-props': {
         tooltip: '多选',
-        tooltipLayout: 'text',
       },
       'x-component': 'TreeSelect',
       'x-component-props': {
@@ -204,7 +203,7 @@ const openTestItemEditor = (id?: number | string, parent?: ITestItem) => {
       }, [productTypes])
 
       return (
-        <FormLayout labelCol={4} wrapperCol={20}>
+        <FormLayout labelCol={5} wrapperCol={19}>
           <SchemaField
             schema={schema}
             scope={{

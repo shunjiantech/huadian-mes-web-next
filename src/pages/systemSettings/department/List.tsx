@@ -79,7 +79,7 @@ const openDepartmentEditor = (id?: number | string, parent?: IDepartment) => {
   const dialog = FormDialog(
     id ? '编辑' : parent ? `${parent.name} - 新增子部门` : '新增',
     () => (
-      <FormLayout labelCol={4} wrapperCol={20}>
+      <FormLayout labelCol={5} wrapperCol={19}>
         <SchemaField schema={schema} />
       </FormLayout>
     ),
