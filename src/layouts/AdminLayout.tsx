@@ -11,6 +11,8 @@ import BlankLayout from '@/layouts/BlankLayout'
 import routes, { RouteObjectExt } from '@/routes'
 import permissionsState from '@/store/permissionsState'
 
+export const headerHeight = 48
+
 const genRoutes = (
   routes: RouteObjectExt[],
   permissions: string[],
@@ -69,6 +71,7 @@ const Layout = () => {
       layout="mix"
       logo={logo}
       title={config.TITLE}
+      headerHeight={headerHeight}
       fixedHeader
       fixSiderbar
       location={{
