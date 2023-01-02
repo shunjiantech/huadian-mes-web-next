@@ -24,7 +24,7 @@ import { AxiosResponse } from 'axios'
 import _ from 'lodash-es'
 import queryString from 'query-string'
 import { useEffect, useMemo, useRef, useState } from 'react'
-import { useLocation } from 'react-router-dom'
+import { Link, useLocation } from 'react-router-dom'
 import { useRecoilValue } from 'recoil'
 
 import productTypesState from '@/store/productTypesState'
@@ -341,7 +341,11 @@ const List = () => {
       {
         title: '试验名称',
         dataIndex: 'name',
-        render: (dom) => <div className="min-w-14">{dom}</div>,
+        render: (dom, record) => (
+          <div className="min-w-14">
+            <Link to={`../${record.id}`}>{record.name}</Link>
+          </div>
+        ),
       },
       {
         title: '英文名称',

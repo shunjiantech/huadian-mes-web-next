@@ -130,6 +130,36 @@ const routes: RouteObjectExt[] = [
                   </CheckPermissions>
                 ),
               },
+              {
+                path: ':id',
+                menu: {
+                  name: '试验项目设置',
+                  hideInMenu: true,
+                },
+                element: (
+                  <CheckPermissions fallback={<Forbidden />}>
+                    {createLazyEl(
+                      () =>
+                        import('@/pages/testInfo/testItem/ChildPageContainer'),
+                    )}
+                  </CheckPermissions>
+                ),
+                children: [
+                  {
+                    path: 'designable',
+                    menu: {
+                      name: '试验页面编辑',
+                    },
+                    element: (
+                      <CheckPermissions fallback={<Forbidden />}>
+                        {createLazyEl(
+                          () => import('@/pages/testInfo/testItem/Designable'),
+                        )}
+                      </CheckPermissions>
+                    ),
+                  },
+                ],
+              },
             ],
           },
           {
