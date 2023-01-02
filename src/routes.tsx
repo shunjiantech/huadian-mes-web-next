@@ -1,4 +1,5 @@
 import {
+  CarryOutOutlined,
   ExperimentOutlined,
   FileExclamationOutlined,
   SettingOutlined,
@@ -68,6 +69,44 @@ const routes: RouteObjectExt[] = [
       </CheckToken>
     ),
     children: [
+      {
+        path: 'workbench',
+        menu: {
+          icon: <CarryOutOutlined />,
+          name: '个人中心',
+        },
+        element: (
+          <CheckPermissions fallback={<Forbidden />}>
+            {createLazyEl(() => import('@/layouts/BlankLayout'))}
+          </CheckPermissions>
+        ),
+        children: [
+          {
+            path: 'task',
+            menu: {
+              flatMenu: true,
+            },
+            element: (
+              <CheckPermissions fallback={<Forbidden />}>
+                {createLazyEl(() => import('@/layouts/BlankLayout'))}
+              </CheckPermissions>
+            ),
+            children: [
+              {
+                path: 'list',
+                menu: {
+                  name: '任务列表',
+                },
+                element: (
+                  <CheckPermissions fallback={<Forbidden />}>
+                    {createLazyEl(() => import('@/pages/workbench/task/List'))}
+                  </CheckPermissions>
+                ),
+              },
+            ],
+          },
+        ],
+      },
       {
         path: 'test-info',
         menu: {
