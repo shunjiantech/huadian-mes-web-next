@@ -1,5 +1,6 @@
 import {
   CarryOutOutlined,
+  DashboardOutlined,
   ExperimentOutlined,
   FileExclamationOutlined,
   SettingOutlined,
@@ -49,6 +50,40 @@ const createLazyEl = (factory: Parameters<typeof React.lazy>[0]) => {
 }
 
 const routes: RouteObjectExt[] = [
+  {
+    path: '/dashboard',
+    menu: {
+      flatMenu: true,
+    },
+    element: (
+      <CheckToken
+        needToken={true}
+        fallbackEffect={({ navigate, location }) => {
+          navigate(
+            `/login?redirect=${encodeURIComponent(
+              `${location.pathname}${location.search}`,
+            )}`,
+          )
+        }}
+      >
+        {createLazyEl(() => import('@/layouts/BlankLayout'))}
+      </CheckToken>
+    ),
+    children: [
+      {
+        path: '',
+        menu: {
+          icon: <DashboardOutlined />,
+          name: '大屏统计',
+        },
+        element: (
+          <CheckPermissions fallback={<Forbidden />}>
+            {createLazyEl(() => import('@/pages/Dashboard'))}
+          </CheckPermissions>
+        ),
+      },
+    ],
+  },
   {
     path: '/',
     menu: {

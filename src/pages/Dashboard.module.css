@@ -1,0 +1,23 @@
+.dots {
+  top: 116px !important;
+}
+
+.dots li {
+  margin: 0 3px !important;
+}
+
+.dots li {
+  width: 6px !important;
+  height: 6px !important;
+}
+
+.dots li button {
+  width: 100% !important;
+  height: 100% !important;
+  background-color: rgba(255, 255, 255, 0.5) !important;
+  border-radius: 50% !important;
+}
+
+.dots li:global(.slick-active) button {
+  background-color: #129bff !important;
+}
