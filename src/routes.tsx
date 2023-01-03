@@ -138,6 +138,17 @@ const routes: RouteObjectExt[] = [
                   </CheckPermissions>
                 ),
               },
+              {
+                path: 'do',
+                menu: {
+                  name: '试验测试',
+                },
+                element: (
+                  <CheckPermissions fallback={<Forbidden />}>
+                    {createLazyEl(() => import('@/pages/workbench/task/Do'))}
+                  </CheckPermissions>
+                ),
+              },
             ],
           },
         ],
