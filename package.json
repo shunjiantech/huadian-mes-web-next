@@ -20,6 +20,7 @@
     "@formily/reactive": "^2.2.14",
     "@formily/reactive-react": "^2.2.14",
     "@formily/shared": "^2.2.14",
+    "ahooks": "^3.7.4",
     "antd": "^4.24.5",
     "axios": "^1.2.1",
     "crypto-js": "^4.1.1",
