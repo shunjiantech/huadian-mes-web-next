@@ -866,7 +866,7 @@ const Dashboard = () => {
         }}
       >
         <div
-          className="w-1920px h-1080px bg-#040711 overflow-hidden origin-top-left"
+          className="w-1920px h-10800px bg-#040711 overflow-hidden origin-top-left"
           style={{
             transform: `scale(${scale})`,
             backgroundImage: `url(${bgGridUrl})`,
