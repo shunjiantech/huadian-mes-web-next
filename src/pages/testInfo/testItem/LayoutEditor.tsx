@@ -7,7 +7,7 @@ import { useParams } from 'react-router-dom'
 import { headerHeight } from '@/layouts/AdminLayout'
 import request from '@/utils/request'
 
-const Designable = () => {
+const LayoutEditor = () => {
   const iframeRef = useRef<HTMLIFrameElement>(null)
 
   const params = useParams()
@@ -137,4 +137,4 @@ const Designable = () => {
   )
 }
 
-export default Designable
+export default LayoutEditor

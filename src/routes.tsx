@@ -231,14 +231,15 @@ const routes: RouteObjectExt[] = [
                 ),
                 children: [
                   {
-                    path: 'designable',
+                    path: 'layout/editor',
                     menu: {
-                      name: '试验页面编辑',
+                      name: '试验页面布局',
                     },
                     element: (
                       <CheckPermissions fallback={<Forbidden />}>
                         {createLazyEl(
-                          () => import('@/pages/testInfo/testItem/Designable'),
+                          () =>
+                            import('@/pages/testInfo/testItem/LayoutEditor'),
                         )}
                       </CheckPermissions>
                     ),
