@@ -4,6 +4,7 @@ import { useMemo } from 'react'
 import { Outlet, useLocation, useNavigate } from 'react-router-dom'
 
 const items: TabsProps['items'] = [
+  { label: '试验项目字段', key: 'field/list' },
   { label: '试验页面布局', key: 'layout/editor' },
 ]
 

@@ -231,6 +231,19 @@ const routes: RouteObjectExt[] = [
                 ),
                 children: [
                   {
+                    path: 'field/list',
+                    menu: {
+                      name: '试验项目字段',
+                    },
+                    element: (
+                      <CheckPermissions fallback={<Forbidden />}>
+                        {createLazyEl(
+                          () => import('@/pages/testInfo/testItem/FieldList'),
+                        )}
+                      </CheckPermissions>
+                    ),
+                  },
+                  {
                     path: 'layout/editor',
                     menu: {
                       name: '试验页面布局',
