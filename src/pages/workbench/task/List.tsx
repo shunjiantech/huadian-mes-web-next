@@ -314,25 +314,6 @@ const List = () => {
           syncToInitialValues: false,
         }}
         rowKey="id"
-        tableAlertOptionRender={({ selectedRowKeys }) => {
-          return (
-            <Space>
-              <Popconfirm
-                title="您确定要删除吗？"
-                onConfirm={async () => {
-                  await request.delete(
-                    `/api/v1/tasks/${selectedRowKeys.join(',')}`,
-                  )
-                  tableActionRef.current?.reload()
-                }}
-              >
-                <Typography.Link disabled={selectedRowKeys.length === 0}>
-                  批量删除
-                </Typography.Link>
-              </Popconfirm>
-            </Space>
-          )
-        }}
         toolbar={{
           title: '数据列表',
         }}
