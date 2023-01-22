@@ -139,6 +139,19 @@ const routes: RouteObjectExt[] = [
                 ),
               },
               {
+                path: 'my_action_record',
+                menu: {
+                  name: '操作记录',
+                },
+                element: (
+                  <CheckPermissions fallback={<Forbidden />}>
+                    {createLazyEl(
+                      () => import('@/pages/workbench/task/MyActionRecord'),
+                    )}
+                  </CheckPermissions>
+                ),
+              },
+              {
                 path: 'do',
                 menu: {
                   name: '试验测试',

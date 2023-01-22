@@ -34,7 +34,7 @@ import { isBigIntStr } from '@/utils/bigintString'
 import request from '@/utils/request'
 import { useSyncDataSource } from '@/utils/useDataSource'
 
-interface ITestItem {
+export interface ITestItem {
   pid?: number | string
   id?: number | string
   name?: string
