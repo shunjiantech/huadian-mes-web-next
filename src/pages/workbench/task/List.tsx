@@ -11,6 +11,7 @@ import {
 } from 'antd'
 import { AxiosResponse } from 'axios'
 import { useMemo, useRef } from 'react'
+import { Link } from 'react-router-dom'
 import { useRecoilValue } from 'recoil'
 
 import productTypesState from '@/store/productTypesState'
@@ -162,13 +163,7 @@ const List = () => {
         hideInSearch: true,
         render: (dom, record) => (
           <div className="min-w-14">
-            <Typography.Link
-              onClick={() => {
-                console.log(record.device_id)
-              }}
-            >
-              查看
-            </Typography.Link>
+            <Link to={`../${record.device_id}/action_record`}>查看</Link>
           </div>
         ),
       },

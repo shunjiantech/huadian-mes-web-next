@@ -8,6 +8,10 @@ import { useMemo, useRef } from 'react'
 import { useRecoilValue } from 'recoil'
 
 import { ITestItem } from '@/pages/testInfo/testItem/List'
+import {
+  taskTypeColors,
+  taskTypeNames,
+} from '@/pages/workbench/task/TaskActionRecord'
 import productTypesState from '@/store/productTypesState'
 import { filterTreeNodeTitle } from '@/utils/antdUtils'
 import request from '@/utils/request'
@@ -29,15 +33,6 @@ interface IActionRecord {
   approval_record_result?: 0 | 1 // 审批结果：0：驳回，1：通过，任务类型3,4,5时必须
   approval_record_content?: string // 审批内容：任务类型3,4,5时必须
   test_items?: ITestItem[]
-}
-
-const taskTypeColors = {
-  1: 'cyan',
-  2: 'purple',
-  3: 'pink',
-  4: 'pink',
-  5: 'pink',
-  6: 'blue',
 }
 
 const MyActionRecord = () => {
@@ -113,20 +108,13 @@ const MyActionRecord = () => {
                 <Tag
                   color={record.task_type && taskTypeColors[record.task_type]}
                 >
-                  {
-                    [
-                      '',
-                      record.is_canceled === 1
-                        ? '调度'
-                        : record.test_user_name
-                        ? '调度 → 试验'
-                        : '调度 → 审批',
-                      '试验',
-                      '一级审批',
-                      '二级审批',
-                      '三级审批',
-                    ][record.task_type]
-                  }
+                  {record.task_type === 1
+                    ? record.is_canceled === 1
+                      ? '调度'
+                      : record.test_user_name
+                      ? '调度 → 试验'
+                      : '调度 → 审批'
+                    : taskTypeNames[record.task_type]}
                 </Tag>
                 {record.is_canceled === 1 ? (
                   <Tag color="error">退回</Tag>
@@ -147,14 +135,16 @@ const MyActionRecord = () => {
                   (record.test_user_name ||
                     record.secondary_test_user_name) && (
                     <>
-                      {record.test_user_name && (
-                        <Tag>试验人员: {record.test_user_name}</Tag>
-                      )}
-                      {record.secondary_test_user_name && (
-                        <Tag>
-                          辅助试验人员: {record.secondary_test_user_name}
-                        </Tag>
-                      )}
+                      {[1, 2].includes(record.task_type) &&
+                        record.test_user_name && (
+                          <Tag>试验人员: {record.test_user_name}</Tag>
+                        )}
+                      {[2].includes(record.task_type) &&
+                        record.secondary_test_user_name && (
+                          <Tag>
+                            辅助试验人员: {record.secondary_test_user_name}
+                          </Tag>
+                        )}
                       <Popover
                         title="试验列表"
                         trigger="click"

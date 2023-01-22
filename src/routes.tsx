@@ -139,6 +139,34 @@ const routes: RouteObjectExt[] = [
                 ),
               },
               {
+                path: ':device_id',
+                menu: {
+                  name: '任务列表',
+                  hideInMenu: true,
+                },
+                element: (
+                  <CheckPermissions fallback={<Forbidden />}>
+                    {createLazyEl(() => import('@/layouts/BlankLayout'))}
+                  </CheckPermissions>
+                ),
+                children: [
+                  {
+                    path: 'action_record',
+                    menu: {
+                      name: '历史流程',
+                    },
+                    element: (
+                      <CheckPermissions fallback={<Forbidden />}>
+                        {createLazyEl(
+                          () =>
+                            import('@/pages/workbench/task/TaskActionRecord'),
+                        )}
+                      </CheckPermissions>
+                    ),
+                  },
+                ],
+              },
+              {
                 path: 'my_action_record',
                 menu: {
                   name: '操作记录',
