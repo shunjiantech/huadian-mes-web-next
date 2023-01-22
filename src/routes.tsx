@@ -151,7 +151,7 @@ const routes: RouteObjectExt[] = [
                 ),
                 children: [
                   {
-                    path: 'action_record',
+                    path: 'action-record',
                     element: (
                       <CheckPermissions fallback={<Forbidden />}>
                         {createLazyEl(
@@ -164,7 +164,7 @@ const routes: RouteObjectExt[] = [
                 ],
               },
               {
-                path: 'my_action_record',
+                path: 'my-action-record',
                 menu: {
                   name: '操作记录',
                 },
