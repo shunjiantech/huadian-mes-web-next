@@ -1,6 +1,14 @@
 import { PageContainer } from '@ant-design/pro-layout'
 import ProTable, { ActionType, ProColumns } from '@ant-design/pro-table'
-import { message, Popconfirm, Space, Tag, TreeSelect, Typography } from 'antd'
+import {
+  message,
+  Popconfirm,
+  Select,
+  Space,
+  Tag,
+  TreeSelect,
+  Typography,
+} from 'antd'
 import { AxiosResponse } from 'axios'
 import { useMemo, useRef } from 'react'
 import { useRecoilValue } from 'recoil'
@@ -21,8 +29,7 @@ interface ITask {
   test_status?: number
 }
 
-const taskStatusEnum: Record<number, string> = {
-  0: '',
+const taskStatusEnum: Record<string, string> = {
   1: '待调度',
   2: '调度中',
   3: '待签收试验',
@@ -35,6 +42,22 @@ const taskStatusEnum: Record<number, string> = {
   10: '待审批（三级）',
   11: '审批中（三级）',
   12: '审批完成',
+}
+
+const taskStatusEnumOptions = Object.keys(taskStatusEnum).map((key) => {
+  return {
+    value: key,
+    label: taskStatusEnum[key],
+  }
+})
+
+const getTaskStatusColor = (key: number | string = 0) => {
+  const numKey = Number(key)
+  return [1, 3, 4, 6, 8, 10].includes(numKey)
+    ? 'orange'
+    : [2, 5, 7, 9, 11].includes(numKey)
+    ? 'blue'
+    : 'green'
 }
 
 const List = () => {
@@ -102,18 +125,18 @@ const List = () => {
       {
         title: '任务状态',
         key: 'task_status',
-        valueEnum: taskStatusEnum,
+        renderFormItem: () => (
+          <Select allowClear placeholder="请选择">
+            {taskStatusEnumOptions.map(({ label, value }, index) => (
+              <Select.Option value={value} key={index}>
+                <Tag color={getTaskStatusColor(value)}>{label}</Tag>
+              </Select.Option>
+            ))}
+          </Select>
+        ),
         render: (dom, record) => (
           <div className="min-w-14">
-            <Tag
-              color={
-                [1, 3, 4, 6, 8, 10].includes(record.task_status ?? 0)
-                  ? 'orange'
-                  : [2, 5, 7, 9, 11].includes(record.task_status ?? 0)
-                  ? 'blue'
-                  : 'green'
-              }
-            >
+            <Tag color={getTaskStatusColor(record.task_status)}>
               {taskStatusEnum[record.task_status ?? 0]}
             </Tag>
           </div>
