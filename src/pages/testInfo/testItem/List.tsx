@@ -29,6 +29,7 @@ import { useRecoilValue } from 'recoil'
 
 import productTypesState from '@/store/productTypesState'
 import testItemTypesState from '@/store/testItemTypesState'
+import { filterTreeNodeTitle } from '@/utils/antdUtils'
 import { isBigIntStr } from '@/utils/bigintString'
 import request from '@/utils/request'
 import { useSyncDataSource } from '@/utils/useDataSource'
@@ -153,6 +154,8 @@ const schema = {
         placeholder: '请选择',
         multiple: true,
         treeDefaultExpandAll: true,
+        showSearch: true,
+        filterTreeNode: '{{filterTreeNodeTitle}}',
       },
       'x-reactions': ['{{useSyncDataSource(productTypesTreeData)}}'],
     },
@@ -191,11 +194,13 @@ const openTestItemEditor = (id?: number | string, parent?: ITestItem) => {
       const productTypesTreeData = useMemo(() => {
         return productTypes.map(({ id, name, children }) => ({
           label: name,
+          title: name,
           value: id,
           selectable: false,
           isLeaf: false,
           children: children?.map(({ id, name }) => ({
             label: name,
+            title: name,
             value: id,
             selectable: true,
             isLeaf: true,
@@ -211,6 +216,7 @@ const openTestItemEditor = (id?: number | string, parent?: ITestItem) => {
               useSyncDataSource,
               productTypesTreeData,
               testItemTypesData,
+              filterTreeNodeTitle,
             }}
           />
         </FormLayout>
@@ -446,6 +452,7 @@ const List = () => {
             allowClear
             showSearch
             placeholder="请选择"
+            filterTreeNode={filterTreeNodeTitle}
           />
         ),
       },

@@ -27,6 +27,7 @@ import { useLocation } from 'react-router-dom'
 import { useRecoilValue } from 'recoil'
 
 import productTypesState from '@/store/productTypesState'
+import { filterTreeNodeTitle } from '@/utils/antdUtils'
 import { isBigIntStr } from '@/utils/bigintString'
 import request from '@/utils/request'
 import { useSyncDataSource } from '@/utils/useDataSource'
@@ -80,6 +81,8 @@ const schema = {
       'x-component-props': {
         placeholder: '请选择',
         treeDefaultExpandAll: true,
+        showSearch: true,
+        filterTreeNode: '{{filterTreeNodeTitle}}',
       },
       'x-reactions': ['{{useSyncDataSource(productTypesTreeData)}}'],
     },
@@ -106,11 +109,13 @@ const openTestPlanEditor = (id?: number | string) => {
     const productTypesTreeData = useMemo(() => {
       return productTypes.map(({ id, name, children }) => ({
         label: name,
+        title: name,
         value: id,
         selectable: false,
         isLeaf: false,
         children: children?.map(({ id, name }) => ({
           label: name,
+          title: name,
           value: id,
           selectable: true,
           isLeaf: true,
@@ -125,6 +130,7 @@ const openTestPlanEditor = (id?: number | string) => {
           scope={{
             useSyncDataSource,
             productTypesTreeData,
+            filterTreeNodeTitle,
           }}
         />
       </FormLayout>
@@ -310,6 +316,7 @@ const List = () => {
             allowClear
             showSearch
             placeholder="请选择"
+            filterTreeNode={filterTreeNodeTitle}
           />
         ),
       },

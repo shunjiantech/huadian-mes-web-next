@@ -14,6 +14,7 @@ import { useMemo, useRef } from 'react'
 import { useRecoilValue } from 'recoil'
 
 import productTypesState from '@/store/productTypesState'
+import { filterTreeNodeTitle } from '@/utils/antdUtils'
 import request from '@/utils/request'
 
 interface ITask {
@@ -104,6 +105,7 @@ const List = () => {
             allowClear
             showSearch
             placeholder="请选择"
+            filterTreeNode={filterTreeNodeTitle}
           />
         ),
       },
