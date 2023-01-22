@@ -300,6 +300,32 @@ const routes: RouteObjectExt[] = [
             ],
           },
           {
+            path: 'test-limit',
+            menu: {
+              flatMenu: true,
+            },
+            element: (
+              <CheckPermissions fallback={<Forbidden />}>
+                {createLazyEl(() => import('@/layouts/BlankLayout'))}
+              </CheckPermissions>
+            ),
+            children: [
+              {
+                path: 'list',
+                menu: {
+                  name: '试验限值设置',
+                },
+                element: (
+                  <CheckPermissions fallback={<Forbidden />}>
+                    {createLazyEl(
+                      () => import('@/pages/testInfo/testLimit/List'),
+                    )}
+                  </CheckPermissions>
+                ),
+              },
+            ],
+          },
+          {
             path: 'producer',
             menu: {
               flatMenu: true,
