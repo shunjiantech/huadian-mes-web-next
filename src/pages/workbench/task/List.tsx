@@ -78,7 +78,6 @@ const List = () => {
         dataIndex: 'device_name',
         render: (dom) => <div className="min-w-14">{dom}</div>,
       },
-
       {
         title: '产品种类',
         dataIndex: 'device_category_id',
@@ -338,7 +337,7 @@ const List = () => {
           syncToUrl: true,
           syncToInitialValues: false,
         }}
-        rowKey="id"
+        rowKey="device_id"
         toolbar={{
           title: '数据列表',
         }}
