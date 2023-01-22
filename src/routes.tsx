@@ -323,6 +323,36 @@ const routes: RouteObjectExt[] = [
                   </CheckPermissions>
                 ),
               },
+              {
+                path: ':id',
+                menu: {
+                  name: '试验限值设置',
+                  hideInMenu: true,
+                },
+                element: (
+                  <CheckPermissions fallback={<Forbidden />}>
+                    {createLazyEl(
+                      () =>
+                        import('@/pages/testInfo/testLimit/ChildPageContainer'),
+                    )}
+                  </CheckPermissions>
+                ),
+                children: [
+                  {
+                    path: 'item/list',
+                    menu: {
+                      name: '试验限值设置',
+                    },
+                    element: (
+                      <CheckPermissions fallback={<Forbidden />}>
+                        {createLazyEl(
+                          () => import('@/pages/testInfo/testLimit/ItemList'),
+                        )}
+                      </CheckPermissions>
+                    ),
+                  },
+                ],
+              },
             ],
           },
           {

@@ -8,3 +8,12 @@ export const filterTreeNodeTitle: TreeSelectProps['filterTreeNode'] = (
     typeof treeNode.title === 'string' && treeNode.title.includes(inputValue)
   )
 }
+
+export const numberParser = {
+  int: (value: string) => value.replace(/[^\d]+/g, ''),
+  float: (value: string) =>
+    value
+      .replace(/([^\d.]+|)/g, '')
+      .replace(/(?<=\..*)\.+/g, '')
+      .replace(/(?<=\.\d{2})\d+/, ''),
+}
