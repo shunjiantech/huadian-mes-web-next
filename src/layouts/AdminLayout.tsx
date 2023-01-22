@@ -1,5 +1,7 @@
+import { LogoutOutlined, UserOutlined } from '@ant-design/icons'
 import { ProLayout } from '@ant-design/pro-layout'
 import { Route } from '@ant-design/pro-layout/lib/typings'
+import { Avatar, Dropdown, Space, Typography } from 'antd'
 import _ from 'lodash-es'
 import { useMemo } from 'react'
 import { Link, useLocation } from 'react-router-dom'
@@ -10,6 +12,7 @@ import config from '@/config'
 import BlankLayout from '@/layouts/BlankLayout'
 import routes, { RouteObjectExt } from '@/routes'
 import permissionsState from '@/store/permissionsState'
+import userInfoState from '@/store/userInfoState'
 
 export const headerHeight = 48
 
@@ -57,6 +60,7 @@ const genRoutes = (
 const Layout = () => {
   const location = useLocation()
 
+  const userInfo = useRecoilValue(userInfoState)
   const permissions = useRecoilValue(permissionsState)
 
   const layoutRoutes = useMemo(
@@ -81,6 +85,55 @@ const Layout = () => {
         routes: layoutRoutes,
       }}
       menuItemRender={(item, dom) => <Link to={item.path ?? '/'}>{dom}</Link>}
+      rightContentRender={() => (
+        <Dropdown
+          menu={{
+            items: [
+              {
+                label: (
+                  <Space>
+                    <UserOutlined />
+                    个人信息
+                  </Space>
+                ),
+                key: 'user_info',
+              },
+              { type: 'divider' },
+              {
+                label: (
+                  <Space>
+                    <LogoutOutlined />
+                    退出登录
+                  </Space>
+                ),
+                key: 'logout',
+              },
+            ],
+          }}
+        >
+          <Space>
+            <div className="flex items-center">
+              <Avatar
+                size="small"
+                shape="square"
+                icon={
+                  !userInfo.avatar_url &&
+                  !(userInfo.nick_name ?? userInfo.user_name) && (
+                    <UserOutlined />
+                  )
+                }
+                src={userInfo.avatar_url}
+              >
+                {!userInfo.avatar_url &&
+                  (userInfo.nick_name?.[0] ?? userInfo.user_name?.[0])}
+              </Avatar>
+            </div>
+            <Typography.Text className="color-white!">
+              {userInfo.nick_name || userInfo.user_name}
+            </Typography.Text>
+          </Space>
+        </Dropdown>
+      )}
     >
       <BlankLayout />
     </ProLayout>
