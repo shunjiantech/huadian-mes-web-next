@@ -27,7 +27,7 @@ import { useEffect, useMemo, useRef, useState } from 'react'
 import { Link, useLocation } from 'react-router-dom'
 import { useRecoilValue } from 'recoil'
 
-import productTypesState from '@/store/productTypesState'
+import productCategoriesState from '@/store/productCategoriesState'
 import testItemTypesState from '@/store/testItemTypesState'
 import { filterTreeNodeTitle } from '@/utils/antdUtils'
 import { isBigIntStr } from '@/utils/bigintString'
@@ -157,7 +157,7 @@ const schema = {
         showSearch: true,
         filterTreeNode: '{{filterTreeNodeTitle}}',
       },
-      'x-reactions': ['{{useSyncDataSource(productTypesTreeData)}}'],
+      'x-reactions': ['{{useSyncDataSource(productCategoriesTreeData)}}'],
     },
     description: {
       type: 'string',
@@ -190,9 +190,9 @@ const openTestItemEditor = (id?: number | string, parent?: ITestItem) => {
         })
       }, [testItemTypes])
 
-      const productTypes = useRecoilValue(productTypesState)
-      const productTypesTreeData = useMemo(() => {
-        return productTypes.map(({ id, name, children }) => ({
+      const productCategories = useRecoilValue(productCategoriesState)
+      const productCategoriesTreeData = useMemo(() => {
+        return productCategories.map(({ id, name, children }) => ({
           label: name,
           title: name,
           value: id,
@@ -206,7 +206,7 @@ const openTestItemEditor = (id?: number | string, parent?: ITestItem) => {
             isLeaf: true,
           })),
         }))
-      }, [productTypes])
+      }, [productCategories])
 
       return (
         <FormLayout labelCol={5} wrapperCol={19}>
@@ -214,7 +214,7 @@ const openTestItemEditor = (id?: number | string, parent?: ITestItem) => {
             schema={schema}
             scope={{
               useSyncDataSource,
-              productTypesTreeData,
+              productCategoriesTreeData,
               testItemTypesData,
               filterTreeNodeTitle,
             }}
@@ -281,28 +281,28 @@ const openTestItemEditor = (id?: number | string, parent?: ITestItem) => {
 const List = () => {
   const location = useLocation()
 
-  const [selectedProductType, setSelectedProductType] = useState<
+  const [selectedProductCategory, setSelectedProductCategory] = useState<
     string | number | undefined
   >()
 
   useEffect(() => {
-    // sync: url to selectedProductType
-    const queryProductType = queryString.parse(
+    // sync: url to selectedProductCategory
+    const queryProductCategory = queryString.parse(
       location.search,
     ).device_category_id
-    if (typeof queryProductType === 'string') {
-      if (isBigIntStr(queryProductType)) {
-        setSelectedProductType(queryProductType)
+    if (typeof queryProductCategory === 'string') {
+      if (isBigIntStr(queryProductCategory)) {
+        setSelectedProductCategory(queryProductCategory)
       } else if (
-        !isNaN(Number(queryProductType)) &&
-        `${Number(queryProductType)}` === queryProductType
+        !isNaN(Number(queryProductCategory)) &&
+        `${Number(queryProductCategory)}` === queryProductCategory
       ) {
-        setSelectedProductType(Number(queryProductType))
+        setSelectedProductCategory(Number(queryProductCategory))
       } else {
-        setSelectedProductType('all')
+        setSelectedProductCategory('all')
       }
     } else {
-      setSelectedProductType('all')
+      setSelectedProductCategory('all')
     }
   }, [])
 
@@ -311,14 +311,14 @@ const List = () => {
 
   const testItemTypes = useRecoilValue(testItemTypesState)
 
-  const productTypes = useRecoilValue(productTypesState)
-  const productTypesTreeData = useMemo<AntdTreeDataNode[]>(() => {
+  const productCategories = useRecoilValue(productCategoriesState)
+  const productCategoriesTreeData = useMemo<AntdTreeDataNode[]>(() => {
     return [
       {
         key: 'all',
         title: '全部',
       },
-      ...productTypes.map(({ id, name, children }) => ({
+      ...productCategories.map(({ id, name, children }) => ({
         key: id,
         title: name,
         selectable: false,
@@ -331,7 +331,7 @@ const List = () => {
         })),
       })),
     ]
-  }, [productTypes])
+  }, [productCategories])
 
   const [tableSelectedRowKeys, setTableSelectedRowKeys] = useState<
     (number | string)[]
@@ -433,7 +433,7 @@ const List = () => {
         renderFormItem: () => (
           <TreeSelect
             treeData={[
-              ...productTypes.map(({ id, name, children }) => ({
+              ...productCategories.map(({ id, name, children }) => ({
                 key: id,
                 value: id,
                 title: name,
@@ -457,7 +457,7 @@ const List = () => {
         ),
       },
     ],
-    [tableActionRef, testItemTypes, productTypes],
+    [tableActionRef, testItemTypes, productCategories],
   )
 
   return (
@@ -501,9 +501,9 @@ const List = () => {
         form={{
           syncToUrl: (values, type) => {
             {
-              // sync to selectedProductType
+              // sync to selectedProductCategory
               if (type === 'set') {
-                setSelectedProductType(values.device_category_id ?? 'all')
+                setSelectedProductCategory(values.device_category_id ?? 'all')
               }
             }
             return values
@@ -543,9 +543,9 @@ const List = () => {
               <div className="flex-none w-240px mr-4 pt-1 bg-white rounded overflow-hidden">
                 <Tree.DirectoryTree
                   selectedKeys={
-                    selectedProductType ? [selectedProductType] : []
+                    selectedProductCategory ? [selectedProductCategory] : []
                   }
-                  treeData={productTypesTreeData}
+                  treeData={productCategoriesTreeData}
                   defaultExpandAll
                   icon={null}
                   onSelect={([selectedKey]) => {

@@ -3,16 +3,16 @@ import { selector } from 'recoil'
 
 import request from '@/utils/request'
 
-export interface IProductType {
+export interface IProductCategory {
   id: number | string
   code?: string
   name: string
-  children?: IProductType[]
+  children?: IProductCategory[]
 }
 
-const key = 'productTypesState'
+const key = 'productCategoriesState'
 
-const productTypesState = selector({
+const productCategoriesState = selector<IProductCategory[]>({
   key,
   get: async () => {
     try {
@@ -20,7 +20,7 @@ const productTypesState = selector({
         Partial<{
           code: number
           message: string
-          data: IProductType[]
+          data: IProductCategory[]
         }>
       > = await request.get('/api/v1/device_categories/tree')
       if (response.data.code !== 0) {
@@ -33,4 +33,4 @@ const productTypesState = selector({
   },
 })
 
-export default productTypesState
+export default productCategoriesState

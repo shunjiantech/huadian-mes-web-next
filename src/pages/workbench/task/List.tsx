@@ -14,7 +14,7 @@ import { useMemo, useRef } from 'react'
 import { Link } from 'react-router-dom'
 import { useRecoilValue } from 'recoil'
 
-import productTypesState from '@/store/productTypesState'
+import productCategoriesState from '@/store/productCategoriesState'
 import { filterTreeNodeTitle } from '@/utils/antdUtils'
 import request from '@/utils/request'
 
@@ -65,7 +65,7 @@ const getTaskStatusColor = (key: number | string = 0) => {
 const List = () => {
   const tableActionRef = useRef<ActionType>()
 
-  const productTypes = useRecoilValue(productTypesState)
+  const productCategories = useRecoilValue(productCategoriesState)
 
   const columns = useMemo<ProColumns<ITask>[]>(
     () => [
@@ -86,7 +86,7 @@ const List = () => {
         renderFormItem: () => (
           <TreeSelect
             treeData={[
-              ...productTypes.map(({ id, name, children }) => ({
+              ...productCategories.map(({ id, name, children }) => ({
                 key: id,
                 value: id,
                 title: name,

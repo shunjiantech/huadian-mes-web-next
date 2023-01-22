@@ -12,7 +12,7 @@ import {
   taskTypeColors,
   taskTypeNames,
 } from '@/pages/workbench/task/TaskActionRecord'
-import productTypesState from '@/store/productTypesState'
+import productCategoriesState from '@/store/productCategoriesState'
 import { filterTreeNodeTitle } from '@/utils/antdUtils'
 import request from '@/utils/request'
 
@@ -38,7 +38,7 @@ interface IActionRecord {
 const MyActionRecord = () => {
   const tableActionRef = useRef<ActionType>()
 
-  const productTypes = useRecoilValue(productTypesState)
+  const productCategories = useRecoilValue(productCategoriesState)
 
   const columns = useMemo<ProColumns<IActionRecord>[]>(
     () => [
@@ -59,7 +59,7 @@ const MyActionRecord = () => {
         renderFormItem: () => (
           <TreeSelect
             treeData={[
-              ...productTypes.map(({ id, name, children }) => ({
+              ...productCategories.map(({ id, name, children }) => ({
                 key: id,
                 value: id,
                 title: name,
