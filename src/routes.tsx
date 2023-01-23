@@ -356,6 +356,32 @@ const routes: RouteObjectExt[] = [
             ],
           },
           {
+            path: 'product-category',
+            menu: {
+              flatMenu: true,
+            },
+            element: (
+              <CheckPermissions fallback={<Forbidden />}>
+                {createLazyEl(() => import('@/layouts/BlankLayout'))}
+              </CheckPermissions>
+            ),
+            children: [
+              {
+                path: 'list',
+                menu: {
+                  name: '产品种类设置',
+                },
+                element: (
+                  <CheckPermissions fallback={<Forbidden />}>
+                    {createLazyEl(
+                      () => import('@/pages/testInfo/productCategory/List'),
+                    )}
+                  </CheckPermissions>
+                ),
+              },
+            ],
+          },
+          {
             path: 'producer',
             menu: {
               flatMenu: true,

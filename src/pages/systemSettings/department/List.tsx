@@ -10,7 +10,7 @@ import { useMemo, useRef } from 'react'
 
 import request from '@/utils/request'
 
-interface IDepartment {
+export interface IDepartment {
   pid?: number | string
   id?: number | string
   name?: string
