@@ -186,6 +186,9 @@ const schema = {
       'x-component-props': {
         accept: 'image/*',
         maxCount: 2,
+        data: {
+          type: 3,
+        },
       },
     },
   },
