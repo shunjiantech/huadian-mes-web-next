@@ -60,7 +60,7 @@ export const pathsToFiles = (obj: unknown, keys: Key[]) => {
       const url = urls[index]
       return {
         uid: `${Math.random()}`,
-        name: '',
+        name: path.split(/[/\\]/).reverse()[0],
         response: {
           data: {
             path,
