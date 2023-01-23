@@ -48,7 +48,7 @@ const taskStatusEnum: Record<string, string> = {
 
 const taskStatusEnumOptions = Object.keys(taskStatusEnum).map((key) => {
   return {
-    value: key,
+    value: Number(key),
     label: taskStatusEnum[key],
   }
 })
