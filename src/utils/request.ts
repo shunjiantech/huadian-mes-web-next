@@ -8,6 +8,8 @@ import {
   urlStringToBigInt,
 } from '@/utils//bigintString'
 
+export const getBearerToken = () => `Bearer ${token}`
+
 const request = axios.create({
   baseURL: config.API_BASEURL,
   timeout: config.API_TIMEOUT,
