@@ -433,6 +433,32 @@ const routes: RouteObjectExt[] = [
               },
             ],
           },
+          {
+            path: 'print-template',
+            menu: {
+              flatMenu: true,
+            },
+            element: (
+              <CheckPermissions fallback={<Forbidden />}>
+                {createLazyEl(() => import('@/layouts/BlankLayout'))}
+              </CheckPermissions>
+            ),
+            children: [
+              {
+                path: 'list',
+                menu: {
+                  name: '模板管理',
+                },
+                element: (
+                  <CheckPermissions fallback={<Forbidden />}>
+                    {createLazyEl(
+                      () => import('@/pages/testInfo/printTemplate/List'),
+                    )}
+                  </CheckPermissions>
+                ),
+              },
+            ],
+          },
         ],
       },
       {
