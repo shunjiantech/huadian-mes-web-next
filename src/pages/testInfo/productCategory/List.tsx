@@ -382,28 +382,30 @@ const List = () => {
         hideInSearch: true,
         render: (dom, record) => (
           <div className="min-w-14">
-            <Space>
-              {record.pic1_url && (
-                <Image
-                  src={record.pic1_url}
-                  width={32}
-                  height={32}
-                  preview={{
-                    mask: <EyeOutlined />,
-                  }}
-                />
-              )}
-              {record.pic2_url && (
-                <Image
-                  src={record.pic2_url}
-                  width={32}
-                  height={32}
-                  preview={{
-                    mask: <EyeOutlined />,
-                  }}
-                />
-              )}
-            </Space>
+            <Image.PreviewGroup>
+              <Space>
+                {record.pic1_url && (
+                  <Image
+                    src={record.pic1_url}
+                    width={32}
+                    height={32}
+                    preview={{
+                      mask: <EyeOutlined />,
+                    }}
+                  />
+                )}
+                {record.pic2_url && (
+                  <Image
+                    src={record.pic2_url}
+                    width={32}
+                    height={32}
+                    preview={{
+                      mask: <EyeOutlined />,
+                    }}
+                  />
+                )}
+              </Space>
+            </Image.PreviewGroup>
           </div>
         ),
       },
