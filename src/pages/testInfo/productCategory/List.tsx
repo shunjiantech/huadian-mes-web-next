@@ -55,7 +55,7 @@ const ExtraParamTypeSelect = (props: any) => {
     <AntdSelect {...props}>
       {extraParamTypes.map((item, index) => (
         <AntdSelect.Option value={item.code} key={index}>
-          <div className="flex items-center">
+          <div className="h-full flex items-center">
             <Tag>{item.code}</Tag>
             {item.name}
           </div>

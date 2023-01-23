@@ -131,7 +131,9 @@ const List = () => {
           <Select allowClear placeholder="请选择">
             {taskStatusEnumOptions.map(({ label, value }, index) => (
               <Select.Option value={value} key={index}>
-                <Tag color={getTaskStatusColor(value)}>{label}</Tag>
+                <div className="h-full flex items-center">
+                  <Tag color={getTaskStatusColor(value)}>{label}</Tag>
+                </div>
               </Select.Option>
             ))}
           </Select>
