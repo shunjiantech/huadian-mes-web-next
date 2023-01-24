@@ -1,32 +1,43 @@
 import { PlusOutlined } from '@ant-design/icons'
-import { PageContainer } from '@ant-design/pro-layout'
 import ProTable, { ActionType, ProColumns } from '@ant-design/pro-table'
-import { FormDialog, FormItem, FormLayout, Input, Select } from '@formily/antd'
+import {
+  FormDialog,
+  FormItem,
+  FormLayout,
+  Input,
+  SelectTable,
+} from '@formily/antd'
 import { createSchemaField } from '@formily/react'
-import { Button, message, Popconfirm, Space, Typography } from 'antd'
+import { Button, message, Popconfirm, Space, Tag, Typography } from 'antd'
 import { AxiosResponse } from 'axios'
 import _ from 'lodash-es'
 import { useMemo, useRef, useState } from 'react'
-import { Link } from 'react-router-dom'
+import { useParams } from 'react-router-dom'
 import { useRecoilValue } from 'recoil'
 
-import testAreaTypesState from '@/store/testAreaTypesState'
+import usersState from '@/store/usersState'
+import { isBigIntStr } from '@/utils/bigintString'
 import request from '@/utils/request'
 
-interface ITestArea {
+interface IStation {
   id?: number | string
   name?: string
   code?: string
-  test_area_type_id?: number | string
-  test_area_type?: string
   description?: string
+  test_area_id?: number | string
+  test_user_ids?: (number | string)[]
+  test_users?: {
+    id?: number | string
+    name?: string
+    nick_name?: string
+  }[]
 }
 
 const SchemaField = createSchemaField({
   components: {
     FormItem,
     Input,
-    Select,
+    SelectTable,
   },
 })
 
@@ -35,7 +46,7 @@ const schema = {
   properties: {
     name: {
       type: 'string',
-      title: '区域名称',
+      title: '工位名称',
       required: true,
       'x-validator': [
         {
@@ -50,7 +61,7 @@ const schema = {
     },
     code: {
       type: 'string',
-      title: '区域编码',
+      title: '工位编码',
       'x-validator': [
         {
           whitespace: true,
@@ -62,20 +73,9 @@ const schema = {
         placeholder: '请输入',
       },
     },
-    test_area_type_id: {
-      type: 'string',
-      title: '区域类型',
-      required: true,
-      'x-decorator': 'FormItem',
-      'x-component': 'Select',
-      'x-component-props': {
-        placeholder: '请选择',
-      },
-      enum: '{{testAreaTypesEnumOptions}}',
-    },
     description: {
       type: 'string',
-      title: '区域描述',
+      title: '工位描述',
       'x-validator': [
         {
           whitespace: true,
@@ -87,22 +87,43 @@ const schema = {
         placeholder: '请输入',
       },
     },
+    test_user_ids: {
+      type: 'array',
+      title: '人员',
+      'x-decorator': 'FormItem',
+      'x-component': 'SelectTable',
+      'x-component-props': {
+        mode: 'multiple',
+        primaryKey: 'id',
+        pagination: false,
+      },
+      enum: '{{users}}',
+      properties: {
+        user_name: {
+          title: '用户名',
+          type: 'string',
+          'x-component': 'SelectTable.Column',
+        },
+        nick_name: {
+          title: '昵称',
+          type: 'string',
+          'x-component': 'SelectTable.Column',
+        },
+      },
+    },
   },
 }
 
-const openTestAreaEditor = (id?: number | string) => {
+const openStationEditor = (
+  paramsId?: number | string,
+  id?: number | string,
+) => {
   const dialog = FormDialog(id ? '编辑' : '新增', () => {
-    const testAreaTypes = useRecoilValue(testAreaTypesState)
-    const testAreaTypesEnumOptions = useMemo(() => {
-      return testAreaTypes.map(({ id, name }) => ({
-        label: name,
-        value: id,
-      }))
-    }, [testAreaTypes])
+    const users = useRecoilValue(usersState)
 
     return (
       <FormLayout labelCol={5} wrapperCol={19}>
-        <SchemaField schema={schema} scope={{ testAreaTypesEnumOptions }} />
+        <SchemaField schema={schema} scope={{ users }} />
       </FormLayout>
     )
   })
@@ -114,9 +135,9 @@ const openTestAreaEditor = (id?: number | string) => {
           Partial<{
             code: number
             message: string
-            data: ITestArea
+            data: IStation
           }>
-        > = await request.get(`/api/v1/test_areas/${id}`)
+        > = await request.get(`/api/v1/test_stations/${id}`)
         if (response.data.code !== 0) {
           throw new Error(response.data.message ?? '')
         }
@@ -126,6 +147,8 @@ const openTestAreaEditor = (id?: number | string) => {
           data = {
             ...data,
             id: undefined,
+            test_users: undefined,
+            test_user_ids: data.test_users?.map(({ id }) => id ?? 0) ?? [],
           }
         }
         initialValues = data
@@ -136,18 +159,19 @@ const openTestAreaEditor = (id?: number | string) => {
     })
   }
   dialog.forConfirm(async (payload, next) => {
-    let data = _.cloneDeep<ITestArea>(payload.values)
+    let data = _.cloneDeep<IStation>(payload.values)
     {
       // data transform
       data = {
+        test_area_id: paramsId,
         ...data,
       }
     }
     try {
       if (id) {
-        await request.put(`/api/v1/test_areas/${id}`, data)
+        await request.put(`/api/v1/test_stations/${id}`, data)
       } else {
-        await request.post('/api/v1/test_areas', data)
+        await request.post(`/api/v1/test_stations`, data)
       }
     } catch (err) {
       message.error((err as Error).message)
@@ -158,16 +182,21 @@ const openTestAreaEditor = (id?: number | string) => {
   return dialog.open()
 }
 
-const List = () => {
+const StationList = () => {
+  const params = useParams()
+
+  const paramsId = useMemo(
+    () => (isBigIntStr(params.id) ? params.id : Number(params.id)),
+    [params.id],
+  )
+
   const tableActionRef = useRef<ActionType>()
 
   const [tableSelectedRowKeys, setTableSelectedRowKeys] = useState<
     (number | string)[]
   >([])
 
-  const testAreaTypes = useRecoilValue(testAreaTypesState)
-
-  const columns = useMemo<ProColumns<ITestArea>[]>(
+  const columns = useMemo<ProColumns<IStation>[]>(
     () => [
       {
         dataIndex: 'index',
@@ -175,36 +204,34 @@ const List = () => {
         width: 34,
       },
       {
-        title: '区域名称',
+        title: '工位名称',
         dataIndex: 'name',
-        render: (dom, record) => (
-          <div className="min-w-14">
-            <Link to={`../${record.id}`}>{record.name}</Link>
-          </div>
-        ),
+        render: (dom) => <div className="min-w-14">{dom}</div>,
       },
       {
-        title: '区域编码',
+        title: '工位编码',
         dataIndex: 'code',
         render: (dom) => <div className="min-w-14">{dom}</div>,
       },
       {
-        title: '区域类型',
-        dataIndex: 'test_area_type_id',
-        hideInTable: true,
-        valueEnum: _.fromPairs(testAreaTypes.map(({ id, name }) => [id, name])),
-      },
-      {
-        title: '区域类型',
-        dataIndex: 'test_area_type',
-        hideInSearch: true,
-        render: (dom) => <div className="min-w-14">{dom}</div>,
-      },
-      {
-        title: '区域描述',
+        title: '工位描述',
         dataIndex: 'description',
-        hideInSearch: true,
         render: (dom) => <div className="min-w-14">{dom}</div>,
+      },
+      {
+        title: '人员',
+        dataIndex: 'test_users',
+        render: (dom, record) => (
+          <div className="min-w-14">
+            <Space wrap>
+              {record.test_users?.map(({ name, nick_name }, index) => (
+                <Tag className="mr-0!" key={index}>
+                  {nick_name ?? name}
+                </Tag>
+              ))}
+            </Space>
+          </div>
+        ),
       },
       {
         title: '操作',
@@ -215,7 +242,7 @@ const List = () => {
             <Space size={['small', 0]} wrap>
               <Typography.Link
                 onClick={async () => {
-                  await openTestAreaEditor(record.id)
+                  await openStationEditor(paramsId, record.id)
                   tableActionRef.current?.reload()
                 }}
               >
@@ -224,7 +251,7 @@ const List = () => {
               <Popconfirm
                 title="您确定要删除吗？"
                 onConfirm={async () => {
-                  await request.delete(`/api/v1/test_areas/${record.id}`)
+                  await request.delete(`/api/v1/test_stations/${record.id}`)
                   tableActionRef.current?.reload()
                 }}
               >
@@ -235,29 +262,30 @@ const List = () => {
         ),
       },
     ],
-    [tableActionRef, testAreaTypes],
+    [tableActionRef],
   )
 
   return (
-    <PageContainer>
-      <ProTable<ITestArea>
+    <>
+      <ProTable<IStation>
         actionRef={tableActionRef}
-        request={async ({ current, pageSize, ...params }) => {
+        request={async ({ current, pageSize, ...otherParams }) => {
           try {
             const response: AxiosResponse<
               Partial<{
                 code: number
                 message: string
                 data: {
-                  list: ITestArea[]
+                  list: IStation[]
                   page: number
                   page_size: number
                   total: number
                 }
               }>
-            > = await request.get('/api/v1/test_areas', {
+            > = await request.get('/api/v1/test_stations', {
               params: {
-                ...params,
+                test_area_id: paramsId,
+                ...otherParams,
                 page: current,
                 page_size: pageSize,
               },
@@ -314,7 +342,7 @@ const List = () => {
                 title="您确定要删除吗？"
                 onConfirm={async () => {
                   await request.delete(
-                    `/api/v1/test_areas/${selectedRowKeys.join(',')}`,
+                    `/api/v1/test_stations/${selectedRowKeys.join(',')}`,
                   )
                   tableActionRef.current?.reload()
                 }}
@@ -326,6 +354,7 @@ const List = () => {
             </Space>
           )
         }}
+        search={false}
         toolbar={{
           title: '数据列表',
           actions: [
@@ -334,7 +363,7 @@ const List = () => {
               type="primary"
               icon={<PlusOutlined />}
               onClick={async () => {
-                await openTestAreaEditor()
+                await openStationEditor(paramsId)
                 tableActionRef.current?.reload()
               }}
             >
@@ -349,8 +378,8 @@ const List = () => {
         }}
       />
       <FormDialog.Portal />
-    </PageContainer>
+    </>
   )
 }
 
-export default List
+export default StationList

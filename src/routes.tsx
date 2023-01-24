@@ -8,7 +8,11 @@ import {
 import { MenuDataItem } from '@ant-design/pro-layout'
 import { Spin } from 'antd'
 import React, { Suspense } from 'react'
-import { IndexRouteObject, NonIndexRouteObject } from 'react-router-dom'
+import {
+  IndexRouteObject,
+  Navigate,
+  NonIndexRouteObject,
+} from 'react-router-dom'
 
 import CheckPermissions from '@/components/CheckPermissions'
 import CheckToken from '@/components/CheckToken'
@@ -499,6 +503,42 @@ const routes: RouteObjectExt[] = [
                     )}
                   </CheckPermissions>
                 ),
+              },
+              {
+                path: ':id',
+                menu: {
+                  name: '试验区域设置',
+                  hideInMenu: true,
+                },
+                element: (
+                  <CheckPermissions fallback={<Forbidden />}>
+                    {createLazyEl(
+                      () =>
+                        import(
+                          '@/pages/laboratoryInfo/testArea/ChildPageContainer'
+                        ),
+                    )}
+                  </CheckPermissions>
+                ),
+                children: [
+                  { index: true, element: <Navigate to="station/list" /> },
+                  {
+                    path: 'station/list',
+                    menu: {
+                      name: '试验区域工位',
+                    },
+                    element: (
+                      <CheckPermissions fallback={<Forbidden />}>
+                        {createLazyEl(
+                          () =>
+                            import(
+                              '@/pages/laboratoryInfo/testArea/StationList'
+                            ),
+                        )}
+                      </CheckPermissions>
+                    ),
+                  },
+                ],
               },
             ],
           },
