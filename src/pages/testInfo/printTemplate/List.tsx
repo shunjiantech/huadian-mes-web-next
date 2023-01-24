@@ -73,10 +73,28 @@ export const getPrintTemplateTypeColor = (key: number | string = 0) => {
   return printTemplateTypeColors[numKey]
 }
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const PrintTemplateTypeSelect = (props: any) => {
+  return (
+    <AntdSelect {...props}>
+      {printTemplateTypesEnumOptions.map((item, index) => (
+        <AntdSelect.Option value={item.value} key={index}>
+          <div className="h-full flex items-center">
+            <Tag color={getPrintTemplateTypeColor(item.value)}>
+              {item.label}
+            </Tag>
+          </div>
+        </AntdSelect.Option>
+      ))}
+    </AntdSelect>
+  )
+}
+
 const SchemaField = createSchemaField({
   components: {
     FormItem,
     Input,
+    PrintTemplateTypeSelect,
     Select,
     TreeSelect,
     Upload,
@@ -111,11 +129,10 @@ const schema = {
         },
       ],
       'x-decorator': 'FormItem',
-      'x-component': 'Select',
+      'x-component': 'PrintTemplateTypeSelect',
       'x-component-props': {
         placeholder: '请选择',
       },
-      enum: '{{printTemplateTypesEnumOptions}}',
     },
     path: {
       type: 'array',
@@ -217,7 +234,6 @@ const openPrintTemplateEditor = (id?: number | string) => {
           schema={schema}
           scope={{
             useSyncDataSource,
-            printTemplateTypesEnumOptions,
             productCategoriesTreeData,
             filterTreeNodeTitle,
           }}
