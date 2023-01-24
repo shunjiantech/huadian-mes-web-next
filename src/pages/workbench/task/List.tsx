@@ -152,10 +152,10 @@ const List = () => {
         hideInSearch: true,
         render: (dom, record) => (
           <div className="min-w-14">
-            <Typography.Link>
+            <Link to={`../${record.device_id}/test-progress`}>
               查看({record.completed_test_item_count}/
               {record.total_test_item_count})
-            </Typography.Link>
+            </Link>
           </div>
         ),
       },
