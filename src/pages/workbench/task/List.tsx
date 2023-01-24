@@ -165,7 +165,7 @@ const List = () => {
         hideInSearch: true,
         render: (dom, record) => (
           <div className="min-w-14">
-            <Link to={`../${record.device_id}/action_record`}>查看</Link>
+            <Link to={`../${record.device_id}/action-record`}>查看</Link>
           </div>
         ),
       },
