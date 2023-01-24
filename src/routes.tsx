@@ -477,6 +477,33 @@ const routes: RouteObjectExt[] = [
         ),
         children: [
           {
+            path: 'test-instrument',
+            menu: {
+              flatMenu: true,
+            },
+            element: (
+              <CheckPermissions fallback={<Forbidden />}>
+                {createLazyEl(() => import('@/layouts/BlankLayout'))}
+              </CheckPermissions>
+            ),
+            children: [
+              {
+                path: 'list',
+                menu: {
+                  name: '试验仪器设置',
+                },
+                element: (
+                  <CheckPermissions fallback={<Forbidden />}>
+                    {createLazyEl(
+                      () =>
+                        import('@/pages/laboratoryInfo/testInstrument/List'),
+                    )}
+                  </CheckPermissions>
+                ),
+              },
+            ],
+          },
+          {
             path: 'test-instrument-type',
             menu: {
               flatMenu: true,

@@ -10,7 +10,7 @@ import { useMemo, useRef } from 'react'
 
 import request from '@/utils/request'
 
-interface ITestInstrumentType {
+export interface ITestInstrumentType {
   id?: number | string
   name?: string
 }
