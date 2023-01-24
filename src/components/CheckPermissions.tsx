@@ -1,7 +1,7 @@
 import _ from 'lodash-es'
 import { useRecoilValue } from 'recoil'
 
-import permissionsState from '@/store/permissionsState'
+import userPermissionsState from '@/store/userPermissionsState'
 
 const CheckPermissions = (
   props: React.PropsWithChildren<{
@@ -10,12 +10,12 @@ const CheckPermissions = (
     fallback?: React.ReactNode
   }>,
 ) => {
-  const permissions = useRecoilValue(permissionsState)
+  const userPermissions = useRecoilValue(userPermissionsState)
 
   if (
     props.exclude &&
     props.exclude.length > 0 &&
-    _.intersection(permissions, props.exclude).length > 0
+    _.intersection(userPermissions, props.exclude).length > 0
   ) {
     return <>{props.fallback}</>
   }
@@ -23,7 +23,7 @@ const CheckPermissions = (
   if (
     props.include &&
     props.include.length > 0 &&
-    _.intersection(permissions, props.include).length === 0
+    _.intersection(userPermissions, props.include).length === 0
   ) {
     return <>{props.fallback}</>
   }

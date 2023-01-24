@@ -11,8 +11,8 @@ import logo from '@/assets/logo.svg'
 import config from '@/config'
 import BlankLayout from '@/layouts/BlankLayout'
 import routes, { RouteObjectExt } from '@/routes'
-import permissionsState from '@/store/permissionsState'
 import userInfoState from '@/store/userInfoState'
+import userPermissionsState from '@/store/userPermissionsState'
 
 export const headerHeight = 48
 
@@ -61,11 +61,11 @@ const Layout = () => {
   const location = useLocation()
 
   const userInfo = useRecoilValue(userInfoState)
-  const permissions = useRecoilValue(permissionsState)
+  const userPermissions = useRecoilValue(userPermissionsState)
 
   const layoutRoutes = useMemo(
-    () => genRoutes(routes, permissions),
-    [permissions],
+    () => genRoutes(routes, userPermissions),
+    [userPermissions],
   )
 
   return (
