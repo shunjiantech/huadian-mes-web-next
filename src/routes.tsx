@@ -598,6 +598,32 @@ const routes: RouteObjectExt[] = [
               },
             ],
           },
+          {
+            path: 'role',
+            menu: {
+              flatMenu: true,
+            },
+            element: (
+              <CheckPermissions fallback={<Forbidden />}>
+                {createLazyEl(() => import('@/layouts/BlankLayout'))}
+              </CheckPermissions>
+            ),
+            children: [
+              {
+                path: 'list',
+                menu: {
+                  name: '角色管理',
+                },
+                element: (
+                  <CheckPermissions fallback={<Forbidden />}>
+                    {createLazyEl(
+                      () => import('@/pages/systemSettings/role/List'),
+                    )}
+                  </CheckPermissions>
+                ),
+              },
+            ],
+          },
         ],
       },
     ],
