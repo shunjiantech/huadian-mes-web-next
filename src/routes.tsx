@@ -141,7 +141,7 @@ const routes: RouteObjectExt[] = [
               {
                 path: ':device_id',
                 menu: {
-                  name: '操作记录',
+                  name: '任务列表',
                   hideInMenu: true,
                 },
                 element: (
@@ -152,6 +152,9 @@ const routes: RouteObjectExt[] = [
                 children: [
                   {
                     path: 'action-record',
+                    menu: {
+                      name: '历史流程',
+                    },
                     element: (
                       <CheckPermissions fallback={<Forbidden />}>
                         {createLazyEl(
