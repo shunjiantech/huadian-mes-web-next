@@ -156,6 +156,19 @@ const routes: RouteObjectExt[] = [
                 children: [
                   { index: true, element: <Navigate to="test-progress" /> },
                   {
+                    path: 'test',
+                    menu: {
+                      name: '试验',
+                    },
+                    element: (
+                      <CheckPermissions fallback={<Forbidden />}>
+                        {createLazyEl(
+                          () => import('@/pages/workbench/task/Test'),
+                        )}
+                      </CheckPermissions>
+                    ),
+                  },
+                  {
                     path: 'test-progress',
                     menu: {
                       name: '试验进度',
