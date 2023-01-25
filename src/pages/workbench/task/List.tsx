@@ -1,6 +1,14 @@
 import { PageContainer } from '@ant-design/pro-layout'
 import ProTable, { ActionType, ProColumns } from '@ant-design/pro-table'
 import {
+  FormDialog,
+  FormItem,
+  FormLayout,
+  Input,
+  SelectTable,
+} from '@formily/antd'
+import { createSchemaField } from '@formily/react'
+import {
   message,
   Popconfirm,
   Select,
@@ -10,13 +18,24 @@ import {
   Typography,
 } from 'antd'
 import { AxiosResponse } from 'axios'
+import _ from 'lodash-es'
+import queryString from 'query-string'
 import { useMemo, useRef } from 'react'
 import { Link } from 'react-router-dom'
 import { useRecoilValue } from 'recoil'
 
+import getTestStationUsersState from '@/store/getTestStationUsersState'
 import productCategoriesState from '@/store/productCategoriesState'
+import userInfoState from '@/store/userInfoState'
 import { filterTreeNodeTitle } from '@/utils/antdUtils'
 import request from '@/utils/request'
+
+interface ITestItem {
+  id?: number | string
+  name?: string
+  ename?: string
+  children?: Omit<ITestItem, 'children'>[]
+}
 
 interface ITask {
   device_id?: number | string
@@ -29,6 +48,9 @@ interface ITask {
   total_test_item_count?: number
   report_status?: number
   test_status?: number
+  test_items?: ITestItem[]
+  test_station_id?: number | string
+  test_station?: string
 }
 
 const taskStatusEnum: Record<string, string> = {
@@ -60,6 +82,103 @@ const getTaskStatusColor = (key: number | string = 0) => {
     : [2, 5, 7, 9, 11].includes(numKey)
     ? 'blue'
     : 'green'
+}
+
+const SchemaField = createSchemaField({
+  components: {
+    FormItem,
+    Input,
+    SelectTable,
+  },
+})
+
+const startTestSchema = {
+  type: 'object',
+  properties: {
+    qrcode: {
+      type: 'string',
+      title: '二维码编码',
+      required: true,
+      'x-validator': [
+        {
+          whitespace: true,
+        },
+      ],
+      'x-decorator': 'FormItem',
+      'x-component': 'Input',
+      'x-component-props': {
+        placeholder: '请输入',
+      },
+    },
+    secondary_test_user_id: {
+      type: 'string',
+      title: '辅助试验人员',
+      required: true,
+      'x-decorator': 'FormItem',
+      'x-component': 'SelectTable',
+      'x-component-props': {
+        mode: 'single',
+        primaryKey: 'id',
+        pagination: false,
+      },
+      enum: '{{testStationUsers}}',
+      properties: {
+        name: {
+          title: '用户名',
+          type: 'string',
+          'x-component': 'SelectTable.Column',
+        },
+        nick_name: {
+          title: '昵称',
+          type: 'string',
+          'x-component': 'SelectTable.Column',
+        },
+      },
+    },
+  },
+}
+
+const openStartTestDialog = (
+  device_id: number | string,
+  test_station_id: number | string,
+  device_category_id: number | string,
+) => {
+  const dialog = FormDialog('开始试验', () => {
+    const testStationUsers = useRecoilValue(
+      getTestStationUsersState(test_station_id, device_category_id),
+    )
+    const userInfo = useRecoilValue(userInfoState)
+    return (
+      <FormLayout labelCol={5} wrapperCol={19}>
+        <SchemaField
+          schema={startTestSchema}
+          scope={{
+            testStationUsers: testStationUsers.filter(
+              ({ id }) => id !== userInfo.id,
+            ),
+          }}
+        />
+      </FormLayout>
+    )
+  })
+  dialog.forConfirm(async (payload, next) => {
+    let data = _.cloneDeep(payload.values)
+    data = {
+      device_id,
+      ...data,
+    }
+    try {
+      const response = await request.post('/api/v1/tasks/start_test', data)
+      if (response.data.code !== 0) {
+        throw new Error(response.data.message ?? '')
+      }
+    } catch (err) {
+      message.error((err as Error).message)
+      return Promise.reject(err)
+    }
+    return next()
+  })
+  return dialog.open()
 }
 
 const List = () => {
@@ -212,7 +331,24 @@ const List = () => {
               )}
               {record.task_status === 4 && (
                 <>
-                  <Typography.Link>开始试验</Typography.Link>
+                  <Typography.Link
+                    onClick={async () => {
+                      if (
+                        record.device_id &&
+                        record.test_station_id &&
+                        record.device_category_id
+                      ) {
+                        await openStartTestDialog(
+                          record.device_id,
+                          record.test_station_id,
+                          record.device_category_id,
+                        )
+                        tableActionRef.current?.reload()
+                      }
+                    }}
+                  >
+                    开始试验
+                  </Typography.Link>
                   <Popconfirm title="退回到调度池中？">
                     <Typography.Link>退回</Typography.Link>
                   </Popconfirm>
@@ -220,7 +356,26 @@ const List = () => {
               )}
               {record.task_status === 5 && (
                 <>
-                  <Typography.Link>继续试验</Typography.Link>
+                  <Link
+                    to={{
+                      pathname: `../${record.device_id}/test`,
+                      search: queryString.stringify({
+                        items: JSON.stringify(
+                          record.test_items?.map(({ id, name, children }) => ({
+                            id,
+                            name,
+                            children: children?.map(({ id, name }) => ({
+                              id,
+                              name,
+                            })),
+                          })),
+                        ),
+                        test_station_id: record.test_station_id,
+                      }),
+                    }}
+                  >
+                    继续试验
+                  </Link>
                   {record.test_status ? (
                     <Typography.Link>完成试验</Typography.Link>
                   ) : (
@@ -344,6 +499,7 @@ const List = () => {
           defaultPageSize: 10,
         }}
       />
+      <FormDialog.Portal />
     </PageContainer>
   )
 }
