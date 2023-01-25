@@ -2,8 +2,9 @@ import { PageContainer } from '@ant-design/pro-layout'
 import ProTable, { ActionType, ProColumns } from '@ant-design/pro-table'
 import { message, Popconfirm, Space, Tag, Typography } from 'antd'
 import { AxiosResponse } from 'axios'
+import queryString from 'query-string'
 import { useMemo, useRef } from 'react'
-import { useParams } from 'react-router-dom'
+import { Link, useParams } from 'react-router-dom'
 
 import request from '@/utils/request'
 
@@ -82,7 +83,28 @@ const TestProgress = () => {
         render: (dom, record) => (
           <div className="min-w-16">
             <Space size={['small', 0]} wrap>
-              <Typography.Link>查看</Typography.Link>
+              {record.test_status === 1 ? (
+                <Link
+                  to={{
+                    pathname: '../test',
+                    search: queryString.stringify({
+                      items: JSON.stringify([
+                        {
+                          id: record.test_item_id,
+                          name: record.test_item_name,
+                          view: 1,
+                        },
+                      ]),
+                      test_station_id: record.test_station_id,
+                      view: 1,
+                    }),
+                  }}
+                >
+                  查看
+                </Link>
+              ) : (
+                <Typography.Link disabled>查看</Typography.Link>
+              )}
               <Popconfirm
                 title="您确定要重做吗？"
                 onConfirm={async () => {
@@ -95,7 +117,9 @@ const TestProgress = () => {
                   tableActionRef.current?.reload()
                 }}
               >
-                <Typography.Link>重做</Typography.Link>
+                <Typography.Link disabled={record.test_status !== 1}>
+                  重做
+                </Typography.Link>
               </Popconfirm>
             </Space>
           </div>
